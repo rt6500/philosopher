@@ -32,9 +32,9 @@ static long	ft_atol(const char *str)
 void	parse_input(char **argv, t_rules *rule)
 {
 	rule->num_philos = ft_atol(argv[1]);
-	rule->time_to_die = ft_atol(argv[2]) / 1e3;
-	rule->time_to_eat = ft_atol(argv[3]) / 1e3;
-	rule->time_to_sleep = ft_atol(argv[4]) / 1e3;
+	rule->time_to_die = ft_atol(argv[2]);
+	rule->time_to_eat = ft_atol(argv[3]);
+	rule->time_to_sleep = ft_atol(argv[4]);
 	if (argv[5])
 		rule->limit_meals = ft_atol(argv[5]);
 	else
@@ -43,12 +43,24 @@ void	parse_input(char **argv, t_rules *rule)
 
 int	init_data(char **argv, t_rules *rule)
 {
+	int	i;
+
+	i = 0;
 	parse_input(argv, rule);
 	rule->end_simulation = false;
-	if (malloc_with_check(rule->num_philos * sizeof(t_philo)))
+	rule->philos = malloc(rule->num_philos * sizeof(t_philo));
+	if (!rule->philos)
 		return (1);
-	else if (malloc_with_check(rule->num_philos * sizeof(t_philo)))
+	rule->forks = malloc(rule->num_philos * sizeof(t_fork));
+	if (!rule->forks)
 		return (1);
-	else
-		gettimeofday(&rule->start_time, NULL);
+	while (i < rule->num_philos)
+	{
+		handle_mutex(&rule->forks[i].fork, INIT);
+		rule->forks[i].fork_id = i;
+		i++;
+	}
+	pthread_mutex_init(&rule->print_lock, NULL);
+	gettimeofday(&rule->start_time, NULL);
+	return (0);
 }

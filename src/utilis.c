@@ -41,12 +41,14 @@ void	free_array_fork(t_fork **array)
 	free(array);
 }
 
-int		malloc_with_check(size_t size);
+void	*malloc_with_check(size_t size)
 {
-	void *ret;
-	ret = malloc(size);
-	if (ret == NULL)
-		return (printf("Error\n", 1));
+	void	*p;
+
+	p = malloc(size);
+	if (p == NULL)
+		return (write(1, "Error\n", 6), NULL);
 	else
-		return (0);
+		return (p);
 }
+

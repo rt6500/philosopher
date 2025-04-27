@@ -13,6 +13,7 @@
 #include <limits.h>  //LLONG_MAX
 #include <pthread.h> // mutex: init destroy lock unlock,
 						// threads : create join detach
+#include <errno.h>
 #include <stdbool.h>
 #include <stdio.h>    //printf
 #include <stdlib.h>   //malloc free
@@ -22,6 +23,19 @@
 //*** structures ***/
 typedef struct pthread_mutex_t	t_mtx;
 typedef struct s_rules			t_rules;
+
+/*OPCOD for mutexs | thread functions*/
+typedef enum e_opcode
+{
+	INIT,
+	LOCK,
+	UNLOCK,
+	DESTROY,
+	CREATE,
+	JOIN,
+	DETACH,
+}								t_opcode;
+
 typedef struct s_fork
 {
 	pthread_mutex_t				fork;
@@ -68,3 +82,14 @@ void							error_exit(const char *error);
 void							how_long(t_rules rule);
 void							free_array_philo(t_philo **array);
 void							free_array_fork(t_fork **array);
+
+// parse_input.c
+void							parse_input(char **argv, t_rules *rule);
+int								init_data(char **argv, t_rules *rule);
+
+// utilis_thread_mutex.c
+static int	handle_mutex_error(int status, t_opcode opcode);
+int	handle_mutex(pthread_mutex_t *mutex, t_opcode opcode);
+static int	handle_thread_error(int status, t_opcode opcode);
+int	handle_thread(pthread_t *thread, void *(*foo)(void *), \
+	void *data, t_opcode opcode);
