@@ -27,12 +27,14 @@ static int	handle_mutex_error(int status, t_opcode opcode)
 	else if (status == EDEADLK)
 		printf("Error\nA deadlock would occur\n");
 	else if (status == EPERM)
-		printf("Error\nThe current thread does not hold a lock on mutex\n");
+		printf("Error\nNo permission to perform the operation.\n");
 	else if (status == ENOMEM)
 		printf("Error\nNot enough memory to initialize mutex\n");
 	else if (status == EBUSY)
 		printf("Error\nMutex is still locked (cannot destroy it).\n");
-	else
+	else if (status == EAGAIN && opcode == INIT)
+		printf("Error\nThe system lacked the necessary resources.\n");
+	else	
 		printf("Error\nUnknown error (%d)\n", status);
 	return (1);
 }
@@ -63,15 +65,16 @@ static int	handle_thread_error(int status, t_opcode opcode)
 		printf("Error\nInvalid attribute.\n");
 	else if (status == EINVAL && (opcode == JOIN || opcode == DETACH))
 		printf("Error\nthread is not a joinable thread.\n");
-	else if (status == ESRCH && (opcode == DETACH || opcode == JOIN))
-		printf("Error\nNo thread with the ID thread could be found.\n");
+	else if (status == EAGAIN && (opcode == CREATE))
+		printf("Error\nInsufficient resources to create another thread. Or, \
+			system-imposed limit on the number of threads was encountered.");
+	else if (status == EPERM && opcode == CREATE)
+		printf("Error\nPermission denied for thread attributes\n");
 	else if (status == EDEADLK && opcode == JOIN)
 		printf("Error\nA deadlock was detected or \
 			thread specifies the calling thread.\n");
-	else if (status == EAGAIN && opcode == CREATE)
-		printf("Error\nInsufficient resources to create another thread.\n");
-	else if (status == EPERM && opcode == CREATE)
-		printf("Error\nPermission denied for thread attributes\n");
+	else if (status == ESRCH && (opcode == JOIN || opcode == DETACH))
+		printf("Error\nNo thread with the ID thread could be found.\n");
 	else
 		printf("Error\nUnkown error (%d)\n", status);
 	return (1);
