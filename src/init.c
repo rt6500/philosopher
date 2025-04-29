@@ -41,6 +41,36 @@ void	parse_input(char **argv, t_rules *rule)
 		rule->limit_meals = -1;
 }
 
+static void	assign_forks(t_philo *philo, t_fork *forks, \
+	int philo_position)
+{
+	philo->first_fork = &forks[(philo_position + 1) % philo->rules->num_philos];
+	philo->second_fork = &forks[philo_position];
+	if (philo->id % 2 == 0)
+	{
+		philo->first_fork = &forks[philo_position];
+		philo->second_fork = \
+			&forks[(philo_position + 1) % philo->rules->num_philos]; 
+	}
+}
+
+static void	philo_init(t_rules *rule)
+{
+	int		i;
+	t_philo	*philo;
+
+	i = -1;
+	while (++i < rule->num_philos)
+	{
+		philo = rule->philos + i;
+		philo->id = i + 1;
+		philo->full = false;
+		philo->total_meals = 0;
+		philo->rules = rule;
+		assign_forks(philo, rule->forks, i);
+	}
+}
+
 int	init_data(char **argv, t_rules *rule)
 {
 	int	i;
@@ -48,19 +78,22 @@ int	init_data(char **argv, t_rules *rule)
 	i = 0;
 	parse_input(argv, rule);
 	rule->end_simulation = false;
+	rule->all_threads_ready = false;
 	rule->philos = malloc(rule->num_philos * sizeof(t_philo));
 	if (!rule->philos)
 		return (1);
 	rule->forks = malloc(rule->num_philos * sizeof(t_fork));
 	if (!rule->forks)
 		return (1);
+	handle_mutex(&rule->rule_mutex, INIT);
 	while (i < rule->num_philos)
 	{
 		handle_mutex(&rule->forks[i].fork, INIT);
 		rule->forks[i].fork_id = i;
 		i++;
 	}
-	pthread_mutex_init(&rule->print_lock, NULL);
-	gettimeofday(&rule->start_time, NULL);
+	philo_init(rule);
+	// pthread_mutex_init(&rule->print_lock, NULL);
+	// gettimeofday(&rule->start_time, NULL);
 	return (0);
 }
