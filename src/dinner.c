@@ -12,7 +12,6 @@
 
 #include "../philo.h"
 
-
 /*
 
 */
@@ -22,25 +21,41 @@
 1) endless loop philo
 */
 
+// data =  &rule->philos[i]
 void	*dinner_simulation(void *data)
 {
-	t_philo *philo;
+	t_philo	*philo;
+	int		i;
 
 	philo = (t_philo *)data;
+	i = -1;
 	wait_all_threads(philo->rules);
+	// set last meal time
+	while (!simulation_finished(philo->rules))
+	{
+		// 1) am i full?
+		if (philo->full) // thread safe? acccess by moniter also?
+			break ;
+		// 2) eat
+		eat(philo);
+		// 3) sleep
+		sleep(philo);
+		// 4) think
+		think(philo);
+	}
 	return (philo);
 }
 
 /*
 actural dinner
 ./philo 5 100 100 100 [4]
-0) if no meals, return ->[0];
+0) if no meals, return (->[0]);
 0.1) If only one philo->ad hoc function
 1)Create all threads, all philosophers.
 2)Create a monitor thread for death of philos.
 3)Synchronize the beggining of the simulation
-    pthread_create->philo starts running.
-    every philo starts simultaneously.
+	pthread_create->philo starts running.
+	every philo starts simultaneously.
 4) JOIN everyone.
 */
 
@@ -52,22 +67,21 @@ void	start_dinner(t_rules *rule)
 	if (rule->limit_meals == 0)
 		return ;
 	else if (rule->num_philos == 1)
-		;//TODO
+		; // TODO
 	else
 	{
 		while (++i < rule->num_philos)
-			handle_thread(&rule->philos[i].thread_id, dinner_simulation, \
-                &rule->philos[i], CREATE);
+			handle_thread(&rule->philos[i].thread_id, dinner_simulation,
+				&rule->philos[i], CREATE);
 	}
-    // start of simutation
-    rule->start_time = gettime(MICROSECONDS);
-
-    //now all threads are ready.
+	// start of simutation
+	rule->start_time = gettime(MICROSECONDS);
+	// now all threads are ready.
 	set_bool(&rule->rule_mutex, &rule->all_threads_ready, true);
-
-    //wait for everyone
-    i = -1;
-    while (++i < rule->num_philos)
-        handle_thread(&rule->philos[i].thread_id, NULL, NULL, JOIN);
-    printf("full:%d %d %d %d\n", rule->philos->full, rule->philos->full, rule->philos->full, rule->philos->full);
+	// wait for everyone
+	i = -1;
+	while (++i < rule->num_philos)
+		handle_thread(&rule->philos[i].thread_id, NULL, NULL, JOIN);
+	printf("full:%d %d %d %d\n", rule->philos->full, rule->philos->full,
+		rule->philos->full, rule->philos->full);
 }

@@ -96,8 +96,7 @@ void				parse_input(char **argv, t_rules *rule);
 int					init_data(char **argv, t_rules *rule);
 
 // utilis_thread_mutex.c
-int					handle_mutex(pthread_mutex_t *mutex, \
-	t_opcode opcode);
+int					handle_mutex(pthread_mutex_t *mutex, t_opcode opcode);
 int					handle_thread(pthread_t *thread, \
 	void *(*foo)(void *), void *data, t_opcode opcode);
 

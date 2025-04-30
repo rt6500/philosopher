@@ -23,13 +23,13 @@ int	main(int argc, char **argv)
 	{
 		// 2) filling data to rule
 		init_data(argv, &rule);
-		// printf("num: %ld, die: %ld, eat: %ld, sleep: %ld, limit: %ld\n",
-		// 	rule.num_philos, rule.time_to_die, rule.time_to_eat,
-		// 	rule.time_to_sleep, rule.limit_meals);
+		printf("num: %ld, die: %ld, eat: %ld, sleep: %ld, limit: %ld\n",
+			rule.num_philos, rule.time_to_die, rule.time_to_eat,
+			rule.time_to_sleep, rule.limit_meals);
 		// usleep(50000);
 		// how_long(rule);
 		// 3) dinner
-		// start_dinner(rule);
+		start_dinner(&rule);
 		// clean(rule);
 	}
 	return (0);
