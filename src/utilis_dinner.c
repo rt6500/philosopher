@@ -11,45 +11,45 @@
 /* ************************************************************************** */
 
 #include "../philo.h"
+/*
 
+*/
 void	smart_sleep(long duration, t_rules *rules)
 {
 	long	start;
+	long	elapsed;
+	long	remain;
 
 	start = gettime(MICROSECONDS);
-	while (!simulation_finished(rules))
+	while (gettime(MICROSECONDS) - start < duration)
 	{
-		if (gettime(MICROSECONDS) - start >= duration)
+		//1) is simulation finished?
+		if (simulation_finished(rules))
 			break ;
-		usleep(500);
+		elapsed = gettime(MICROSECONDS) - start;
+		remain = duration - elapsed;
+		if (remain > 1e3)
+			usleep(remain / 2);
+		else
+		{
+			while (gettime(MICROSECONDS) - start < duration)
+			;
+		}
 	}
 }
 
-void	log_action(t_philo *philo, const char *action)
+void	print_assigned_forks(t_rules *rules)
 {
-	long	timestamp;
+	int			i;
+	t_philo		*philo;
 
-	timestamp = gettime(MICROSECONDS) - philo->rules->start_time;
-	if (!simulation_finished(philo->rules))
-		printf("%ld %d %s\n", timestamp / 1000, philo->id, action);
-}
-
-int	eat(t_philo *philo)
-{
-	handle_mutex(philo->first_fork, LOCK);
-	log_action(philo, "has taken a fork");
-	handle_mutex(philo->second_fork, LOCK);
-	log_action(philo, "has taken a fork");
-	set_long(&philo->rules->rule_mutex, &philo->last_meal_time,
-		gettime(MICROSECONDS));
-}
-
-int	sleep(t_philo *philo)
-{
-	log_action(philo, "is sleeping");
-	smart_sleep(philo->rules->time_to_sleep, philo->rules);
-}
-
-int	think(t_philo philo)
-{
+	i = 0;
+	while (i < rules->num_philos)
+	{
+		philo = &rules->philos[i];
+		printf("Philo %d:\n", philo->id);
+		printf("  First fork : %d\n", philo->first_fork->fork_id);
+		printf("  Second fork: %d\n", philo->second_fork->fork_id);
+		i++;
+	}
 }

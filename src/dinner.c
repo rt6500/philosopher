@@ -13,15 +13,50 @@
 #include "../philo.h"
 
 /*
-
+thinking routine
 */
+static void	think(t_philo *philo)
+{
+	write_status(THINK, philo, DEBUG_MODE);
+}
 
+/*
+eat routine
+1) grab the forks: 1st and 2nd.abort
+2) update write eat, last_meal_time, total_meals,
+3) release the forks
+*/
+static void	eat_spagetti(t_philo *philo)
+{
+	if (philo->full)
+		return ;
+	else
+	{
+		// 1)
+		handle_mutex(&philo->first_fork->fork, LOCK);
+		write_status(TAKE_FIRST_FORK, philo, DEBUG_MODE);
+		handle_mutex(&philo->second_fork->fork, LOCK);
+		write_status(TAKE_SECOND_FORK, philo, DEBUG_MODE);
+		// 2)
+		set_long(&philo->philo_mutex, &philo->last_meal_time,
+			gettime(MICROSECONDS));
+		philo->total_meals++;
+		write_status(EAT, philo, DEBUG_MODE);
+		smart_sleep(philo->rules->time_to_eat, philo->rules);
+		if (philo->rules->limit_meals > 0
+			&& philo->total_meals == philo->rules->limit_meals)
+			set_bool(&philo->philo_mutex, &philo->full, true);
+		// 3)
+		handle_mutex(&philo->first_fork->fork, UNLOCK);
+		handle_mutex(&philo->second_fork->fork, UNLOCK);
+	}
+}
 /*
 0) wait all philos, synchro start
 1) endless loop philo
+// data =  &rule->philos[i]
 */
 
-// data =  &rule->philos[i]
 void	*dinner_simulation(void *data)
 {
 	t_philo	*philo;
@@ -37,9 +72,10 @@ void	*dinner_simulation(void *data)
 		if (philo->full) // thread safe? acccess by moniter also?
 			break ;
 		// 2) eat
-		eat(philo);
-		// 3) sleep
-		sleep(philo);
+		eat_spagetti(philo);
+		// 3) sleep ->write status & smart usleep
+		write_status(SLEEP, philo, DEBUG_MODE);
+		smart_sleep(philo->rules->time_to_sleep, philo->rules);
 		// 4) think
 		think(philo);
 	}
@@ -82,6 +118,4 @@ void	start_dinner(t_rules *rule)
 	i = -1;
 	while (++i < rule->num_philos)
 		handle_thread(&rule->philos[i].thread_id, NULL, NULL, JOIN);
-	printf("full:%d %d %d %d\n", rule->philos->full, rule->philos->full,
-		rule->philos->full, rule->philos->full);
 }

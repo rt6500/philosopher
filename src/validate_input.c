@@ -38,7 +38,7 @@ int	is_valid_input(int argc, char **argv)
 	int	i;
 
 	i = 1;
-	if (argc == 4 || argc == 5)
+	if (argc == 5 || argc == 6)
 	{
 		while (i < argc)
 		{
@@ -53,7 +53,10 @@ int	is_valid_input(int argc, char **argv)
 		return (1);
 	}
 	else
+	{
+		write(1, "asdf\n", 5);
 		return (0);
+	}
 }
 
 // static const char	*valid_input(const char *str)

@@ -41,16 +41,15 @@ void	parse_input(char **argv, t_rules *rule)
 		rule->limit_meals = -1;
 }
 
-static void	assign_forks(t_philo *philo, t_fork *forks, \
-	int philo_position)
+static void	assign_forks(t_philo *philo, t_fork *forks, int philo_position)
 {
 	philo->first_fork = &forks[(philo_position + 1) % philo->rules->num_philos];
 	philo->second_fork = &forks[philo_position];
 	if (philo->id % 2 == 0)
 	{
 		philo->first_fork = &forks[philo_position];
-		philo->second_fork = \
-			&forks[(philo_position + 1) % philo->rules->num_philos]; 
+		philo->second_fork = &forks[(philo_position + 1)
+			% philo->rules->num_philos];
 	}
 }
 
@@ -67,13 +66,14 @@ static void	philo_init(t_rules *rule)
 		philo->full = false;
 		philo->total_meals = 0;
 		philo->rules = rule;
+		handle_mutex(&rule->philos->philo_mutex, INIT);
 		assign_forks(philo, rule->forks, i);
 	}
 }
 
 int	init_data(char **argv, t_rules *rule)
 {
-	int	i;
+	int i;
 
 	i = 0;
 	parse_input(argv, rule);
@@ -86,6 +86,7 @@ int	init_data(char **argv, t_rules *rule)
 	if (!rule->forks)
 		return (1);
 	handle_mutex(&rule->rule_mutex, INIT);
+	handle_mutex(&rule->write_lock, INIT);
 	while (i < rule->num_philos)
 	{
 		handle_mutex(&rule->forks[i].fork, INIT);
@@ -95,5 +96,6 @@ int	init_data(char **argv, t_rules *rule)
 	philo_init(rule);
 	// pthread_mutex_init(&rule->print_lock, NULL);
 	// gettimeofday(&rule->start_time, NULL);
+	print_assigned_forks(rule);
 	return (0);
 }

@@ -2,9 +2,10 @@ CC = cc
 CFLAGS = -Wall -Wextra -Werror
 NAME = philo
 
-SOURCES = src/main.c \
-src/utilis_thread_mutex.c src/validate_input.c src/dinner.c src/getters_setters.c \
-src/init.c src/sync_utilis.c src/utilis_free_malloc.c src/utilis_timekeeper.c
+SOURCES = src/main.c src/dinner.c src/getters_setters.c src/init.c \
+src/sync_utilis.c src/utilis_dinner.c src/utilis_free_malloc.c \
+src/utilis_thread_mutex.c src/utilis_timekeeper.c src/validate_input.c \
+src/write.c
 
 OBJECTS = $(patsubst src/%.c, objs/%.o, $(SOURCES))
 $(info OBJECTS = $(OBJECTS))
