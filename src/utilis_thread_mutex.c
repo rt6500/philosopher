@@ -34,7 +34,7 @@ static int	handle_mutex_error(int status, t_opcode opcode)
 		printf("Error\nMutex is still locked (cannot destroy it).\n");
 	else if (status == EAGAIN && opcode == INIT)
 		printf("Error\nThe system lacked the necessary resources.\n");
-	else	
+	else
 		printf("Error\nUnknown error (%d)\n", status);
 	return (1);
 }
@@ -80,8 +80,8 @@ static int	handle_thread_error(int status, t_opcode opcode)
 	return (1);
 }
 
-int	handle_thread(pthread_t *thread, void *(*foo)(void *), \
-	void *data, t_opcode opcode)
+int	handle_thread(pthread_t *thread, void *(*foo)(void *), void *data,
+		t_opcode opcode)
 {
 	int	status;
 
@@ -96,4 +96,3 @@ int	handle_thread(pthread_t *thread, void *(*foo)(void *), \
 		return (printf("Error\nUnknown operation\n"), 1);
 	return (handle_thread_error(status, opcode));
 }
-

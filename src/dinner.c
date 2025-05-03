@@ -12,13 +12,50 @@
 
 #include "../philo.h"
 
+void	think(t_philo *philo, bool pre_simulation)
+{
+	long	t_eat;
+	long	t_sleep;
+	long	t_think;
+
+	if (!pre_simulation)
+		write_status(THINK, philo, DEBUG_MODE);
+	if (philo->rules->num_philos % 2 == 0)
+		return ;
+	t_eat = philo->rules->time_to_eat;
+	t_sleep = philo->rules->time_to_sleep;
+	t_think = t_eat * 2- t_sleep; // available time to think
+	if (t_think < 0)
+		t_think = 0;
+	smart_sleep(t_think * 0.42, philo->rules);
+}
+
+/*
+for only one philo
+1)fake lock to the fork.
+2)sleep untill the monitor will bust it
+*/
+void	*one_philo(void *arg)
+{
+	t_philo	*philo;
+
+	philo = (t_philo *)arg;
+	wait_all_threads(philo->rules);
+	set_long(&philo->philo_mutex, &philo->last_meal_time,gettime(MILLISECONDS));
+	increase_long(&philo->rules->rule_mutex, &philo->rules->threads_running_nbr);
+	write_status(TAKE_FIRST_FORK, philo, DEBUG_MODE);
+	while(!simulation_finished(philo->rules))
+		usleep(100);
+	return (NULL);
+}
+
 /*
 thinking routine
 */
-static void	think(t_philo *philo)
-{
-	write_status(THINK, philo, DEBUG_MODE);
-}
+// static void	think(t_philo *philo)
+// {
+// 	write_status(THINK, philo, DEBUG_MODE);
+// }
 
 /*
 eat routine
@@ -28,18 +65,34 @@ eat routine
 */
 static void	eat_spagetti(t_philo *philo)
 {
+	// printf("last_meal_time in the eat fnction0: %ld\n", philo->last_meal_time);
 	if (philo->full)
 		return ;
 	else
 	{
 		// 1)
+		// printf("philo %d: waiting for mutex\n", philo->id);
+		// printf("philo %d: trying to lock first fork addr: %p\n", philo->id,
+		// 	&philo->first_fork->fork);
+		// fflush(stdout);
 		handle_mutex(&philo->first_fork->fork, LOCK);
+		// printf("philo %d: aquired mutex\n", philo->id);
+		// fflush(stdout);
 		write_status(TAKE_FIRST_FORK, philo, DEBUG_MODE);
+		// printf("philo %d: waiting for mutex\n", philo->id);
+		// printf("philo %d: trying to lock second fork addr: %p\n", philo->id,
+		// 	&philo->second_fork->fork);
+		// fflush(stdout);
 		handle_mutex(&philo->second_fork->fork, LOCK);
+		// printf("philo %d: aquired mutex\n", philo->id);
+		// fflush(stdout);
 		write_status(TAKE_SECOND_FORK, philo, DEBUG_MODE);
 		// 2)
+		// printf("gettime: %ld\n", gettime(MICROSECONDS));
 		set_long(&philo->philo_mutex, &philo->last_meal_time,
-			gettime(MICROSECONDS));
+			gettime(MILLISECONDS));
+		// printf("last_meal_time in the eat fnction: %ld\n",
+		// 	philo->last_meal_time);
 		philo->total_meals++;
 		write_status(EAT, philo, DEBUG_MODE);
 		smart_sleep(philo->rules->time_to_eat, philo->rules);
@@ -64,8 +117,22 @@ void	*dinner_simulation(void *data)
 
 	philo = (t_philo *)data;
 	i = -1;
+	// spinlock
 	wait_all_threads(philo->rules);
+	// sync with monitor
+	// increase a rule variable counter, with all threads running
+	increase_long(&philo->rules->rule_mutex,
+		&philo->rules->threads_running_nbr);
+	// printf("last_meal_time in the dinner simlation fnction: %ld\n",
+	// 	philo->last_meal_time);
 	// set last meal time
+	set_long(&philo->philo_mutex, &philo->last_meal_time,
+		gettime(MILLISECONDS));
+	// printf("last_meal_time in the dinner simlation fnction: %ld\n",
+	// 	philo->last_meal_time);
+	// printf("start time: %ld\n", philo->rules->start_time);
+	// desync philos
+	de_synchronize_philo(philo);
 	while (!simulation_finished(philo->rules))
 	{
 		// 1) am i full?
@@ -77,7 +144,7 @@ void	*dinner_simulation(void *data)
 		write_status(SLEEP, philo, DEBUG_MODE);
 		smart_sleep(philo->rules->time_to_sleep, philo->rules);
 		// 4) think
-		think(philo);
+		think(philo, false);
 	}
 	return (philo);
 }
@@ -103,7 +170,8 @@ void	start_dinner(t_rules *rule)
 	if (rule->limit_meals == 0)
 		return ;
 	else if (rule->num_philos == 1)
-		; // TODO
+		handle_thread(&rule->philos[0].thread_id, one_philo, &rule->philos[0],
+			CREATE);
 	else
 	{
 		while (++i < rule->num_philos)
@@ -111,11 +179,16 @@ void	start_dinner(t_rules *rule)
 				&rule->philos[i], CREATE);
 	}
 	// start of simutation
-	rule->start_time = gettime(MICROSECONDS);
+	rule->start_time = gettime(MILLISECONDS);
+	// moniter
+	handle_thread(&rule->monitor, monitor_dinner, rule, CREATE);
 	// now all threads are ready.
 	set_bool(&rule->rule_mutex, &rule->all_threads_ready, true);
 	// wait for everyone
 	i = -1;
 	while (++i < rule->num_philos)
 		handle_thread(&rule->philos[i].thread_id, NULL, NULL, JOIN);
+	// if we manage to reach this linke, all phlilos are full!
+	 set_bool(&rule->rule_mutex, &rule->end_simulation, true);
+	 handle_thread(&rule->monitor, NULL, NULL, JOIN);
 }

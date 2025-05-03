@@ -50,11 +50,20 @@ long	get_long(pthread_mutex_t *mutex, long *value)
 	handle_mutex(mutex, LOCK);
 	ret = *value;
 	handle_mutex(mutex, UNLOCK);
-	return (*value);
+	return (ret);
 }
 
 // simulation finished?
+// bool	simulation_finished(t_rules *rule)
+// {
+// 	return (get_bool(&rule->rule_mutex, &rule->end_simulation));
+// }
+
 bool	simulation_finished(t_rules *rule)
 {
-	return (get_bool(&rule->rule_mutex, &rule->end_simulation));
+	bool	result;
+
+	result = get_bool(&rule->rule_mutex, &rule->end_simulation);
+	// printf("DEBUG: simulation_finished = %d\n", result);
+	return (result);
 }

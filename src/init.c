@@ -29,12 +29,20 @@ static long	ft_atol(const char *str)
 	return (num);
 }
 
+/*					ms		ms		ms
+* ./philo	5	100	100	100	[3]
+	[0]		[1]	[2]	[3]	[4]	[5]
+	1)actual numbrs
+	2)not > INTMAX
+	3)timestamp > 60ms
+	USLEEP need time in microseconds
+*/
 void	parse_input(char **argv, t_rules *rule)
 {
 	rule->num_philos = ft_atol(argv[1]);
-	rule->time_to_die = ft_atol(argv[2]);
-	rule->time_to_eat = ft_atol(argv[3]);
-	rule->time_to_sleep = ft_atol(argv[4]);
+	rule->time_to_die = ft_atol(argv[2]) * 1e3;
+	rule->time_to_eat = ft_atol(argv[3]) * 1e3;
+	rule->time_to_sleep = ft_atol(argv[4]) * 1e3;
 	if (argv[5])
 		rule->limit_meals = ft_atol(argv[5]);
 	else
@@ -79,6 +87,7 @@ int	init_data(char **argv, t_rules *rule)
 	parse_input(argv, rule);
 	rule->end_simulation = false;
 	rule->all_threads_ready = false;
+	rule->threads_running_nbr = 0;
 	rule->philos = malloc(rule->num_philos * sizeof(t_philo));
 	if (!rule->philos)
 		return (1);

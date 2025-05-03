@@ -38,6 +38,10 @@ void	smart_sleep(long duration, t_rules *rules)
 	}
 }
 
+/*
+for debugging
+*/
+
 void	print_assigned_forks(t_rules *rules)
 {
 	int			i;
@@ -53,3 +57,4 @@ void	print_assigned_forks(t_rules *rules)
 		i++;
 	}
 }
+

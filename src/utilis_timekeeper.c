@@ -34,19 +34,18 @@ gettimeofday
 
 time_code is set as seconds, milliseconds, and microseconds.
 */
-long    gettime(t_time_code time_code)
+long	gettime(t_time_code time_code)
 {
-    struct timeval  tv;
+	struct timeval	tv;
 
-    if (gettimeofday(&tv, NULL))
-        return (printf("Gettimeofday failed\n"), -1);
-    if (time_code == SECONDS)
-        return (tv.tv_sec + tv.tv_usec / 1e6);
-    else if (time_code == MILLISECONDS)
-        return (tv.tv_sec * 1e3 + tv.tv_usec / 1e3);
-    else if (time_code == MICROSECONDS)
-        return (tv.tv_sec * 1e6 + tv.tv_usec);
-    else
-        return (printf("Wrong input to gettime"), -1);
+	if (gettimeofday(&tv, NULL))
+		return (printf("Gettimeofday failed\n"), -1);
+	if (time_code == SECONDS)
+		return (tv.tv_sec + tv.tv_usec / 1000000L);
+	else if (time_code == MILLISECONDS)
+		return (tv.tv_sec * 1000L + tv.tv_usec / 1000L);
+	else if (time_code == MICROSECONDS)
+		return (tv.tv_sec * 1000000L + tv.tv_usec);
+	else
+		return (printf("Wrong input to gettime"), -1);
 }
-

@@ -23,7 +23,7 @@
 /*
 write function macro
 */
-#define DEBUG_MODE 1
+#define DEBUG_MODE 0
 
 //*** structures ***/
 typedef struct s_rules	t_rules;
@@ -93,6 +93,8 @@ typedef struct s_rules
 	long				start_time;
 	bool				end_simulation;
 	bool				all_threads_ready;
+	long				threads_running_nbr;
+	pthread_t			monitor;
 	pthread_mutex_t rule_mutex; // avoid races while reading from rules.
 	pthread_mutex_t write_lock; // print out philo's action to standard output.
 	t_fork				*forks;
@@ -108,8 +110,8 @@ int						is_valid_input(int argc, char **argv);
 void					parse_input(char **argv, t_rules *rule);
 
 // utilis_free_malloc.c
-void					free_array_philo(t_philo **array);
-void					free_array_fork(t_fork **array);
+void	clean(t_rules *rule);
+
 
 // init.c
 void					parse_input(char **argv, t_rules *rule);
@@ -130,6 +132,7 @@ long					get_long(pthread_mutex_t *mutex, long *value);
 bool					simulation_finished(t_rules *rule);
 
 // dinner.c
+void	think(t_philo *philo, bool pre_simulation);
 void					*dinner_simulation(void *data);
 void					start_dinner(t_rules *rule);
 void					print_assigned_forks(t_rules *rules);
@@ -139,6 +142,10 @@ void					smart_sleep(long duration, t_rules *rules);
 
 // sync_utilis.c
 void					wait_all_threads(t_rules *rule);
+bool					all_threads_running(pthread_mutex_t *mutex,
+							long *threads, long num_philos);
+void					increase_long(pthread_mutex_t *mutex, long *value);
+void	de_synchronize_philo(t_philo *philo);
 
 // utilis_timekeeper.c
 void					error_exit(const char *error);
@@ -148,3 +155,6 @@ long					gettime(t_time_code time_code);
 // write.c
 void					write_status(t_philo_status status, t_philo *philo,
 							bool debug);
+
+// monitor.c
+void					*monitor_dinner(void *data);

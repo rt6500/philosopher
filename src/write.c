@@ -41,7 +41,8 @@ void	write_status(t_philo_status status, t_philo *philo, bool debug)
 {
 	long elapsed;
 
-	elapsed = gettime(MICROSECONDS) - philo->rules->start_time;
+	// printf("philo %d: entering write_status\n", philo->id);
+	elapsed = gettime(MILLISECONDS) - philo->rules->start_time;
 	if (philo->full)
 		return ;
 	handle_mutex(&philo->rules->write_lock, LOCK);

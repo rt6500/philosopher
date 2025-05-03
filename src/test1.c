@@ -1,9 +1,9 @@
+#include "../philo.h"
+#include <pthread.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
-#include <pthread.h>
 #include <string.h>
-#include "../philo.h"
 
 // Assume your original code is included or properly forward-declared here.
 // Also assume `t_fork` and `handle_mutex()` are defined elsewhere.
@@ -39,16 +39,15 @@ void	parse_input(char **argv, t_rules *rule)
 		rule->limit_meals = -1;
 }
 
-static void	assign_forks(t_philo *philo, t_fork *forks, \
-	int philo_position)
+static void	assign_forks(t_philo *philo, t_fork *forks, int philo_position)
 {
 	philo->first_fork = &forks[(philo_position + 1) % philo->rules->num_philos];
 	philo->second_fork = &forks[philo_position];
 	if (philo->id % 2 == 0)
 	{
 		philo->first_fork = &forks[philo_position];
-		philo->second_fork = \
-			&forks[(philo_position + 1) % philo->rules->num_philos]; 
+		philo->second_fork = &forks[(philo_position + 1)
+			% philo->rules->num_philos];
 	}
 }
 
@@ -91,8 +90,6 @@ int	init_data(char **argv, t_rules *rule)
 		i++;
 	}
 	philo_init(rule);
-	// pthread_mutex_init(&rule->print_lock, NULL);
-	// gettimeofday(&rule->start_time, NULL);
 	return (0);
 }
 
@@ -104,16 +101,15 @@ int	main(int argc, char **argv)
 {
 	t_rules	rule;
 	int		i;
+	char	*fake_argv[] = {"philo", "4", "800", "200", "200", NULL};
+	t_philo	*p;
 
 	// Fake argv for 4 philosophers: 4 800 200 200
-	char *fake_argv[] = { "philo", "4", "800", "200", "200", NULL };
-
 	if (init_data(fake_argv, &rule) != 0)
 	{
 		printf("Initialization failed.\n");
 		return (1);
 	}
-
 	printf("=== Rule Variables ===\n");
 	printf("num_philos: %ld\n", rule.num_philos);
 	printf("time_to_die: %ld\n", rule.time_to_die);
@@ -122,25 +118,23 @@ int	main(int argc, char **argv)
 	printf("limit_meals: %ld\n", rule.limit_meals);
 	printf("end_simulation: %d\n", rule.end_simulation);
 	printf("all_threads_ready: %d\n", rule.all_threads_ready);
-
 	printf("\n=== Philosopher Variables ===\n");
 	for (i = 0; i < rule.num_philos; i++)
 	{
-		t_philo *p = &rule.philos[i];
+		p = &rule.philos[i];
 		printf("Philo %d:\n", p->id);
 		printf("  Full: %d\n", p->full);
 		printf("  Total meals: %ld\n", p->total_meals);
-		printf("  Fork IDs: %d (first), %d (second)\n",
-			p->first_fork->fork_id, p->second_fork->fork_id);
-		printf("  Rule pointer matches: %s\n", p->rules == &rule ? "yes" : "no");
+		printf("  Fork IDs: %d (first), %d (second)\n", p->first_fork->fork_id,
+			p->second_fork->fork_id);
+		printf("  Rule pointer matches: %s\n",
+			p->rules == &rule ? "yes" : "no");
 	}
-
 	// Cleanup (not required for test, but good practice)
 	for (i = 0; i < rule.num_philos; i++)
 		handle_mutex(&rule.forks[i].fork, DESTROY);
 	handle_mutex(&rule.rule_mutex, DESTROY);
 	free(rule.forks);
 	free(rule.philos);
-
 	return (0);
 }
