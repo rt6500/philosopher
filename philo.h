@@ -6,7 +6,7 @@
 /*   By: rseki <rseki@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 09:02:56 by rseki             #+#    #+#             */
-/*   Updated: 2025/04/24 09:02:58 by rseki            ###   ########.fr       */
+/*   Updated: 2025/05/04 07:58:40 by rseki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,34 +71,34 @@ typedef struct s_fork
 /*struct for philosophers*/
 typedef struct s_philo
 {
-	int					id;
-	t_fork				*first_fork;
-	t_fork				*second_fork;
-	pthread_t			thread_id;
+	int					id; // start from 1
+	t_fork				*first_fork; // assgin forks
+	t_fork				*second_fork; // assgin forks
+	pthread_t			thread_id; //CREATE at start_dinner
 	long				last_meal_time;
-	long				total_meals;
-	bool				full;
-	pthread_mutex_t		philo_mutex;
-	t_rules				*rules;
+	long				total_meals; // init as 0
+	bool				full; // init as false
+	pthread_mutex_t		philo_mutex; // init
+	t_rules				*rules; // connected
 }						t_philo;
 
 /*struct for saving inputs, time, counters, flags, and structs*/
 typedef struct s_rules
 {
-	long				num_philos;
-	long				time_to_die;
-	long				time_to_eat;
-	long				time_to_sleep;
-	long				limit_meals;
+	long				num_philos; // input
+	long				time_to_die; // input
+	long				time_to_eat; // input
+	long				time_to_sleep; // input
+	long				limit_meals; // input
 	long				start_time;
-	bool				end_simulation;
-	bool				all_threads_ready;
-	long				threads_running_nbr;
+	bool				end_simulation; //init as false
+	bool				all_threads_ready; // init as false
+	long				threads_running_nbr; // init as 0
 	pthread_t			monitor;
 	pthread_mutex_t rule_mutex; // avoid races while reading from rules.
 	pthread_mutex_t write_lock; // print out philo's action to standard output.
-	t_fork				*forks;
-	t_philo				*philos;
+	t_fork				*forks; // init with malloc
+	t_philo				*philos; // init with malloc
 }						t_rules;
 
 // main.c
@@ -110,8 +110,7 @@ int						is_valid_input(int argc, char **argv);
 void					parse_input(char **argv, t_rules *rule);
 
 // utilis_free_malloc.c
-void	clean(t_rules *rule);
-
+void					clean(t_rules *rule);
 
 // init.c
 void					parse_input(char **argv, t_rules *rule);
@@ -132,7 +131,7 @@ long					get_long(pthread_mutex_t *mutex, long *value);
 bool					simulation_finished(t_rules *rule);
 
 // dinner.c
-void	think(t_philo *philo, bool pre_simulation);
+void					think(t_philo *philo, bool pre_simulation);
 void					*dinner_simulation(void *data);
 void					start_dinner(t_rules *rule);
 void					print_assigned_forks(t_rules *rules);
@@ -145,7 +144,7 @@ void					wait_all_threads(t_rules *rule);
 bool					all_threads_running(pthread_mutex_t *mutex,
 							long *threads, long num_philos);
 void					increase_long(pthread_mutex_t *mutex, long *value);
-void	de_synchronize_philo(t_philo *philo);
+void					de_synchronize_philo(t_philo *philo);
 
 // utilis_timekeeper.c
 void					error_exit(const char *error);

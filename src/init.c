@@ -74,7 +74,7 @@ static void	philo_init(t_rules *rule)
 		philo->full = false;
 		philo->total_meals = 0;
 		philo->rules = rule;
-		handle_mutex(&rule->philos->philo_mutex, INIT);
+		handle_mutex(&philo->philo_mutex, INIT);
 		assign_forks(philo, rule->forks, i);
 	}
 }
@@ -103,8 +103,6 @@ int	init_data(char **argv, t_rules *rule)
 		i++;
 	}
 	philo_init(rule);
-	// pthread_mutex_init(&rule->print_lock, NULL);
-	// gettimeofday(&rule->start_time, NULL);
 	print_assigned_forks(rule);
 	return (0);
 }

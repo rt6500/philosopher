@@ -1,5 +1,5 @@
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -g
+CFLAGS = -Wall -Wextra -Werror -pg #-fsanitize=thread -pthread
 NAME = philo
 
 SOURCES = src/main.c src/dinner.c src/getters_setters.c src/init.c \

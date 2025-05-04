@@ -25,14 +25,12 @@ static bool	philo_died(t_philo *philo)
 	elapsed = gettime(MILLISECONDS) - get_long(&philo->philo_mutex,
 			&philo->last_meal_time);
 	time_to_die = philo->rules->time_to_die / 1000L;
-	// printf("DEBUG: Philo %d elapsed = %ld, time_to_die = %ld\n", philo->id,
-	// 	elapsed, time_to_die);
 
 	if (elapsed > time_to_die)
 	{
-		printf("Philo %d: elapsed = %ld, last_meal_time = %ld, now = %ld, threshold = %ld\n",
-			philo->id, elapsed, get_long(&philo->philo_mutex, &philo->last_meal_time),
-			gettime(MILLISECONDS), philo->rules->time_to_die);
+		// printf("Philo %d: elapsed = %ld, last_meal_time = %ld, now = %ld, threshold = %ld\n",
+		// 	philo->id, elapsed, get_long(&philo->philo_mutex, &philo->last_meal_time),
+		// 	gettime(MILLISECONDS), philo->rules->time_to_die);
 		return (true);
 	}
 	return (false);
@@ -48,7 +46,7 @@ void	*monitor_dinner(void *data)
 	// spinlock till all thread run
 	while (!all_threads_running(&rule->rule_mutex, &rule->threads_running_nbr,
 			rule->num_philos))
-			;
+			usleep(100);
 	// constantly check time to die
 	while (!simulation_finished(rule))
 	{
@@ -57,15 +55,14 @@ void	*monitor_dinner(void *data)
 		{
 			if (philo_died(rule->philos + i) && !simulation_finished(rule))
 			{
-				set_bool(&rule->rule_mutex, &rule->end_simulation, true);
-				// printf("end_simulation: %d, philo_id: %d\n",
-				// 	rule->end_simulation, rule->philos[i].id);
 				write_status(DIED, rule->philos + i, DEBUG_MODE);
-				printf(" Simulation finished = %d | Philo %d status: died = %d\n",
-					get_bool(&rule->rule_mutex, &rule->end_simulation),
-					rule->philos[i].id, philo_died(rule->philos + i));
+				set_bool(&rule->rule_mutex, &rule->end_simulation, true);
+				// printf(" Simulation finished = %d | Philo %d status: died = %d\n",
+				// 	get_bool(&rule->rule_mutex, &rule->end_simulation),
+				// 	rule->philos[i].id, philo_died(rule->philos + i));
 			}
 		}
+		usleep(100);
 	}
 	return (NULL);
 }

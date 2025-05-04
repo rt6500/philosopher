@@ -41,10 +41,12 @@ void	*one_philo(void *arg)
 
 	philo = (t_philo *)arg;
 	wait_all_threads(philo->rules);
-	set_long(&philo->philo_mutex, &philo->last_meal_time,gettime(MILLISECONDS));
-	increase_long(&philo->rules->rule_mutex, &philo->rules->threads_running_nbr);
+	set_long(&philo->philo_mutex, &philo->last_meal_time, \
+		gettime(MILLISECONDS));
+	increase_long(&philo->rules->rule_mutex, \
+		&philo->rules->threads_running_nbr);
 	write_status(TAKE_FIRST_FORK, philo, DEBUG_MODE);
-	while(!simulation_finished(philo->rules))
+	while (!simulation_finished(philo->rules))
 		usleep(100);
 	return (NULL);
 }
@@ -65,34 +67,18 @@ eat routine
 */
 static void	eat_spagetti(t_philo *philo)
 {
-	// printf("last_meal_time in the eat fnction0: %ld\n", philo->last_meal_time);
 	if (philo->full)
 		return ;
 	else
 	{
 		// 1)
-		// printf("philo %d: waiting for mutex\n", philo->id);
-		// printf("philo %d: trying to lock first fork addr: %p\n", philo->id,
-		// 	&philo->first_fork->fork);
-		// fflush(stdout);
 		handle_mutex(&philo->first_fork->fork, LOCK);
-		// printf("philo %d: aquired mutex\n", philo->id);
-		// fflush(stdout);
 		write_status(TAKE_FIRST_FORK, philo, DEBUG_MODE);
-		// printf("philo %d: waiting for mutex\n", philo->id);
-		// printf("philo %d: trying to lock second fork addr: %p\n", philo->id,
-		// 	&philo->second_fork->fork);
-		// fflush(stdout);
 		handle_mutex(&philo->second_fork->fork, LOCK);
-		// printf("philo %d: aquired mutex\n", philo->id);
-		// fflush(stdout);
 		write_status(TAKE_SECOND_FORK, philo, DEBUG_MODE);
 		// 2)
-		// printf("gettime: %ld\n", gettime(MICROSECONDS));
 		set_long(&philo->philo_mutex, &philo->last_meal_time,
 			gettime(MILLISECONDS));
-		// printf("last_meal_time in the eat fnction: %ld\n",
-		// 	philo->last_meal_time);
 		philo->total_meals++;
 		write_status(EAT, philo, DEBUG_MODE);
 		smart_sleep(philo->rules->time_to_eat, philo->rules);
@@ -113,24 +99,17 @@ static void	eat_spagetti(t_philo *philo)
 void	*dinner_simulation(void *data)
 {
 	t_philo	*philo;
-	int		i;
 
 	philo = (t_philo *)data;
-	i = -1;
 	// spinlock
 	wait_all_threads(philo->rules);
 	// sync with monitor
 	// increase a rule variable counter, with all threads running
 	increase_long(&philo->rules->rule_mutex,
 		&philo->rules->threads_running_nbr);
-	// printf("last_meal_time in the dinner simlation fnction: %ld\n",
-	// 	philo->last_meal_time);
 	// set last meal time
 	set_long(&philo->philo_mutex, &philo->last_meal_time,
 		gettime(MILLISECONDS));
-	// printf("last_meal_time in the dinner simlation fnction: %ld\n",
-	// 	philo->last_meal_time);
-	// printf("start time: %ld\n", philo->rules->start_time);
 	// desync philos
 	de_synchronize_philo(philo);
 	while (!simulation_finished(philo->rules))

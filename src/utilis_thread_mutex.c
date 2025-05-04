@@ -43,6 +43,12 @@ int	handle_mutex(pthread_mutex_t *mutex, t_opcode opcode)
 {
 	int	status;
 
+	// /*debug*/
+	// if (opcode == LOCK)
+	// 	printf("[MUTEX] Locking %p\n", (void *)mutex);
+	// else if (opcode == UNLOCK)
+	// 	printf("[MUTEX] Unlocking %p\n", (void *)mutex);
+	// /*debug*/
 	status = 0;
 	if (opcode == INIT)
 		status = pthread_mutex_init(mutex, NULL);
