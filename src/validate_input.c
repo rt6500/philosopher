@@ -53,30 +53,5 @@ int	is_valid_input(int argc, char **argv)
 		return (1);
 	}
 	else
-	{
-		write(1, "asdf\n", 5);
 		return (0);
-	}
 }
-
-// static const char	*valid_input(const char *str)
-// {
-// 	int			len;
-// 	const char	*number;
-
-// 	len = 0;
-// 	while (is_space(*str))
-// 		str++;
-// 	if (*str == '+')
-// 		str++;
-// 	else if (*str == '-')
-// 		error_exit("Error\nOnly positive numbers");
-// 	if (!is_digit(*str))
-// 		error_exit("Error\nThe input is not a number");
-// 	number = str;
-// 	while (is_digit(*str++))
-// 		len++;
-// 	if (len > 10)
-// 		error_exit("Error\nThe number is too big");
-// 	return (number);
-// }

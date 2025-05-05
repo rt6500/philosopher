@@ -17,22 +17,25 @@ Module containing setters_getters
 */
 
 // BOOL
-void	set_bool(pthread_mutex_t *mutex, bool *dest, bool value)
+int	set_bool(pthread_mutex_t *mutex, bool *dest, bool value)
 {
-	handle_mutex(mutex, LOCK);
+	if (handle_mutex(mutex, LOCK))
+		return (1);
 	*dest = value;
-	handle_mutex(mutex, UNLOCK);
+	if (handle_mutex(mutex, UNLOCK))
+		return (1);
+	return (0);
 }
 
-bool	get_bool(pthread_mutex_t *mutex, bool *value)
+int	get_bool(pthread_mutex_t *mutex, bool *value, bool *out)
 {
-	bool	ret;
-
-	handle_mutex(mutex, LOCK);
+	if (handle_mutex(mutex, LOCK))
+		return (1);
 	// READING
-	ret = *value;
-	handle_mutex(mutex, UNLOCK);
-	return (ret);
+	*out = *value;
+	if (handle_mutex(mutex, UNLOCK))
+		return (1);
+	return (0);
 }
 
 // LONG

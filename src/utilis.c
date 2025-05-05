@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utilis_free_malloc.c                               :+:      :+:    :+:   */
+/*   utilis.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rseki <rseki@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,16 +12,22 @@
 
 #include "../philo.h"
 
-// void	*malloc_with_check(size_t size)
-// {
-// 	void	*p;
+static inline bool	is_digit(const char c)
+{
+	return (c >= '0' && c <= '9');
+}
 
-// 	p = malloc(size);
-// 	if (p == NULL)
-// 		return (write(1, "Error\n", 6), NULL);
-// 	else
-// 		return (p);
-// }
+long	ft_atol(const char *str)
+{
+	long	num;
+
+	num = 0;
+	if (*str == '+')
+		str++;
+	while (is_digit(*str))
+		num = (num * 10) + *str++ - '0';
+	return (num);
+}
 
 void	clean(t_rules *rule)
 {

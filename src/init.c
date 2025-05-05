@@ -12,23 +12,6 @@
 
 #include "../philo.h"
 
-static inline bool	is_digit(const char c)
-{
-	return (c >= '0' && c <= '9');
-}
-
-static long	ft_atol(const char *str)
-{
-	long	num;
-
-	num = 0;
-	if (*str == '+')
-		str++;
-	while (is_digit(*str))
-		num = (num * 10) + *str++ - '0';
-	return (num);
-}
-
 /*					ms		ms		ms
 * ./philo	5	100	100	100	[3]
 	[0]		[1]	[2]	[3]	[4]	[5]
@@ -81,7 +64,7 @@ static void	philo_init(t_rules *rule)
 
 int	init_data(char **argv, t_rules *rule)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	parse_input(argv, rule);
@@ -103,6 +86,5 @@ int	init_data(char **argv, t_rules *rule)
 		i++;
 	}
 	philo_init(rule);
-	print_assigned_forks(rule);
 	return (0);
 }

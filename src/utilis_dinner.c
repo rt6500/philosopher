@@ -37,6 +37,17 @@ void	smart_sleep(long duration, t_rules *rules)
 		}
 	}
 }
+// void smart_sleep(long duration, t_rules *rules) 
+// {
+//     long slept = 0;
+//     while (slept < duration && !simulation_finished(rules)) {
+//         long chunk = 1000;             // 1 ms
+//         if (duration - slept < chunk)
+//             chunk = duration_us - slept;
+//         usleep(chunk);
+//         slept += chunk;
+//     }
+// }
 
 /*
 for debugging

@@ -110,6 +110,7 @@ int						is_valid_input(int argc, char **argv);
 void					parse_input(char **argv, t_rules *rule);
 
 // utilis_free_malloc.c
+long					ft_atol(const char *str);
 void					clean(t_rules *rule);
 
 // init.c
@@ -122,9 +123,9 @@ int						handle_thread(pthread_t *thread, void *(*foo)(void *),
 							void *data, t_opcode opcode);
 
 // getters_setters.c
-void					set_bool(pthread_mutex_t *mutex, bool *dest,
+int					set_bool(pthread_mutex_t *mutex, bool *dest,
 							bool value);
-bool					get_bool(pthread_mutex_t *mutex, bool *value);
+int					get_bool(pthread_mutex_t *mutex, bool *value, bool *val);
 void					set_long(pthread_mutex_t *mutex, long *dest,
 							long value);
 long					get_long(pthread_mutex_t *mutex, long *value);
@@ -133,7 +134,7 @@ bool					simulation_finished(t_rules *rule);
 // dinner.c
 void					think(t_philo *philo, bool pre_simulation);
 void					*dinner_simulation(void *data);
-void					start_dinner(t_rules *rule);
+int					start_dinner(t_rules *rule);
 void					print_assigned_forks(t_rules *rules);
 
 // utilis_dinner.c
@@ -156,4 +157,4 @@ void					write_status(t_philo_status status, t_philo *philo,
 							bool debug);
 
 // monitor.c
-void					*monitor_dinner(void *data);
+int					*monitor_dinner(void *data);

@@ -17,8 +17,16 @@ SPINLOCK until all threads get ready
 */
 void	wait_all_threads(t_rules *rule)
 {
-	while (!get_bool(&rule->rule_mutex, &rule->all_threads_ready))
-		; // Do nothing while waiting.
+	bool val;
+
+	while (1)
+	{
+		if (!get_bool(&rule->rule_mutex, &rule->all_threads_ready, &val))
+			break ;
+		if (val)
+			break ;
+		usleep(1);
+	}
 }
 
 /*

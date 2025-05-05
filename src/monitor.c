@@ -15,54 +15,56 @@
 /*
 last_meal --> last_meal
 */
-static bool	philo_died(t_philo *philo)
+static int	philo_died(t_philo *philo, bool *died)
 {
 	long	elapsed;
 	long	time_to_die;
+	bool	full;
+	long	last_meal;
 
-	if (get_bool(&philo->philo_mutex, &philo->full))
-		return (false);
+	if (get_bool(&philo->philo_mutex, &philo->full, &full))
+		return (1);
+	if (full)
+	{
+		*died = false;
+		return (0);
+	}
 	elapsed = gettime(MILLISECONDS) - get_long(&philo->philo_mutex,
 			&philo->last_meal_time);
 	time_to_die = philo->rules->time_to_die / 1000L;
-
-	if (elapsed > time_to_die)
-	{
-		// printf("Philo %d: elapsed = %ld, last_meal_time = %ld, now = %ld, threshold = %ld\n",
-		// 	philo->id, elapsed, get_long(&philo->philo_mutex, &philo->last_meal_time),
-		// 	gettime(MILLISECONDS), philo->rules->time_to_die);
-		return (true);
-	}
-	return (false);
+	*died = (elapsed > time_to_die);
+	return (0);
 }
 
-void	*monitor_dinner(void *data)
+int	*monitor_dinner(void *data)
 {
 	int		i;
 	t_rules	*rule;
+	bool	died;
 
 	rule = (t_rules *)data;
 	// make sure all philo runnning
 	// spinlock till all thread run
 	while (!all_threads_running(&rule->rule_mutex, &rule->threads_running_nbr,
 			rule->num_philos))
-			usleep(100);
+			usleep(1);
 	// constantly check time to die
 	while (!simulation_finished(rule))
 	{
 		i = -1;
 		while (++i < rule->num_philos)
 		{
-			if (philo_died(rule->philos + i) && !simulation_finished(rule))
+			if (philo_died(rule->philos + i, &died))
+				return (1);
+			else if (died && !simulation_finished(rule))
 			{
 				write_status(DIED, rule->philos + i, DEBUG_MODE);
 				set_bool(&rule->rule_mutex, &rule->end_simulation, true);
 				// printf(" Simulation finished = %d | Philo %d status: died = %d\n",
-				// 	get_bool(&rule->rule_mutex, &rule->end_simulation),
-				// 	rule->philos[i].id, philo_died(rule->philos + i));
+				// 	get_bool(&rule->rule_mutex, &rule->end_simulation, &died),
+				// 	rule->philos[i].id, philo_died(rule->philos + i, &died));
 			}
 		}
-		usleep(100);
 	}
-	return (NULL);
+	return (0);
 }

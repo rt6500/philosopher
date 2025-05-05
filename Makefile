@@ -1,9 +1,9 @@
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -pg #-fsanitize=thread -pthread
+CFLAGS = -Wall -Wextra -Werror -pthread -g #-fsanitize=thread -pthread
 NAME = philo
 
 SOURCES = src/main.c src/dinner.c src/getters_setters.c src/init.c \
-src/sync_utilis.c src/utilis_dinner.c src/utilis_free_malloc.c \
+src/sync_utilis.c src/utilis_dinner.c src/utilis.c \
 src/utilis_thread_mutex.c src/utilis_timekeeper.c src/validate_input.c \
 src/write.c src/monitor.c
 

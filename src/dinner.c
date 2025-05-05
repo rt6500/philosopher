@@ -24,7 +24,7 @@ void	think(t_philo *philo, bool pre_simulation)
 		return ;
 	t_eat = philo->rules->time_to_eat;
 	t_sleep = philo->rules->time_to_sleep;
-	t_think = t_eat * 2- t_sleep; // available time to think
+	t_think = t_eat * 2- t_sleep;
 	if (t_think < 0)
 		t_think = 0;
 	smart_sleep(t_think * 0.42, philo->rules);
@@ -47,7 +47,7 @@ void	*one_philo(void *arg)
 		&philo->rules->threads_running_nbr);
 	write_status(TAKE_FIRST_FORK, philo, DEBUG_MODE);
 	while (!simulation_finished(philo->rules))
-		usleep(100);
+		usleep(1);
 	return (NULL);
 }
 
@@ -101,28 +101,19 @@ void	*dinner_simulation(void *data)
 	t_philo	*philo;
 
 	philo = (t_philo *)data;
-	// spinlock
 	wait_all_threads(philo->rules);
-	// sync with monitor
-	// increase a rule variable counter, with all threads running
 	increase_long(&philo->rules->rule_mutex,
 		&philo->rules->threads_running_nbr);
-	// set last meal time
 	set_long(&philo->philo_mutex, &philo->last_meal_time,
 		gettime(MILLISECONDS));
-	// desync philos
 	de_synchronize_philo(philo);
 	while (!simulation_finished(philo->rules))
 	{
-		// 1) am i full?
-		if (philo->full) // thread safe? acccess by moniter also?
+		if (philo->full)
 			break ;
-		// 2) eat
 		eat_spagetti(philo);
-		// 3) sleep ->write status & smart usleep
 		write_status(SLEEP, philo, DEBUG_MODE);
 		smart_sleep(philo->rules->time_to_sleep, philo->rules);
-		// 4) think
 		think(philo, false);
 	}
 	return (philo);
@@ -141,28 +132,32 @@ actural dinner
 4) JOIN everyone.
 */
 
-void	start_dinner(t_rules *rule)
+int	start_dinner(t_rules *rule)
 {
 	int	i;
 
 	i = -1;
 	if (rule->limit_meals == 0)
-		return ;
+		return (1);
 	else if (rule->num_philos == 1)
-		handle_thread(&rule->philos[0].thread_id, one_philo, &rule->philos[0],
-			CREATE);
+	{
+		if (handle_thread(&rule->philos[0].thread_id, one_philo, &rule->philos[0],
+			CREATE))
+			return (1);
+	}
 	else
 	{
 		while (++i < rule->num_philos)
-			handle_thread(&rule->philos[i].thread_id, dinner_simulation,
-				&rule->philos[i], CREATE);
+		{
+			if (handle_thread(&rule->philos[i].thread_id, dinner_simulation,
+				&rule->philos[i], CREATE))
+				return (1);
+		}
 	}
-	// start of simutation
-	rule->start_time = gettime(MILLISECONDS);
-	// moniter
-	handle_thread(&rule->monitor, monitor_dinner, rule, CREATE);
-	// now all threads are ready.
+	if (handle_thread(&rule->monitor, monitor_dinner, rule, CREATE))
+		return (1);
 	set_bool(&rule->rule_mutex, &rule->all_threads_ready, true);
+	rule->start_time = gettime(MILLISECONDS);
 	// wait for everyone
 	i = -1;
 	while (++i < rule->num_philos)
@@ -170,4 +165,5 @@ void	start_dinner(t_rules *rule)
 	// if we manage to reach this linke, all phlilos are full!
 	 set_bool(&rule->rule_mutex, &rule->end_simulation, true);
 	 handle_thread(&rule->monitor, NULL, NULL, JOIN);
+	 return (0);
 }

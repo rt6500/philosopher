@@ -16,21 +16,14 @@ int	main(int argc, char **argv)
 {
 	t_rules	rule;
 
-	// 1) errors checking
 	if (!is_valid_input(argc, argv))
 		return (printf("Error\n"), 1);
 	else
 	{
-		// 2) filling data to rule
-		init_data(argv, &rule);
-		printf("num: %ld, die: %ld, eat: %ld, sleep: %ld, limit: %ld\n",
-			rule.num_philos, rule.time_to_die, rule.time_to_eat,
-			rule.time_to_sleep, rule.limit_meals);
-		// usleep(50000);
-		// how_long(rule);
-		// 3) dinner
-		start_dinner(&rule);
-		// clean(rule);
+		if (init_data(argv, &rule))
+			return (printf("Error\nInitialization failed.\n"), 1);
+		if (start_dinner(&rule))
+			return (printf("Error\nSimulation failed\n"), 1);
 		clean(&rule);
 	}
 	return (0);
