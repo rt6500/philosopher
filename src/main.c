@@ -17,7 +17,7 @@ int	main(int argc, char **argv)
 	t_rules	rule;
 
 	if (!is_valid_input(argc, argv))
-		return (printf("Error\n"), 1);
+		return (printf("Error\nInput is not valid\n"), 1);
 	else
 	{
 		if (init_data(argv, &rule))

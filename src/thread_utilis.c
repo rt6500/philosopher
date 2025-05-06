@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utilis_dinner.c                                    :+:      :+:    :+:   */
+/*   thread_utilis.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rseki <rseki@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,19 +12,21 @@
 
 #include "../philo.h"
 /*
-
+in microseconds!
 */
-void	smart_sleep(long duration, t_rules *rules)
+int	smart_sleep(long duration, t_rules *rules)
 {
 	long	start;
 	long	elapsed;
 	long	remain;
+	bool	finished;
 
 	start = gettime(MICROSECONDS);
 	while (gettime(MICROSECONDS) - start < duration)
 	{
-		//1) is simulation finished?
-		if (simulation_finished(rules))
+		if (simulation_finished(rules, &finished))
+			return (1);
+		if (finished)
 			break ;
 		elapsed = gettime(MICROSECONDS) - start;
 		remain = duration - elapsed;
@@ -33,39 +35,8 @@ void	smart_sleep(long duration, t_rules *rules)
 		else
 		{
 			while (gettime(MICROSECONDS) - start < duration)
-			;
+				;
 		}
 	}
+	return (0);
 }
-// void smart_sleep(long duration, t_rules *rules) 
-// {
-//     long slept = 0;
-//     while (slept < duration && !simulation_finished(rules)) {
-//         long chunk = 1000;             // 1 ms
-//         if (duration - slept < chunk)
-//             chunk = duration_us - slept;
-//         usleep(chunk);
-//         slept += chunk;
-//     }
-// }
-
-/*
-for debugging
-*/
-
-void	print_assigned_forks(t_rules *rules)
-{
-	int			i;
-	t_philo		*philo;
-
-	i = 0;
-	while (i < rules->num_philos)
-	{
-		philo = &rules->philos[i];
-		printf("Philo %d:\n", philo->id);
-		printf("  First fork : %d\n", philo->first_fork->fork_id);
-		printf("  Second fork: %d\n", philo->second_fork->fork_id);
-		i++;
-	}
-}
-

@@ -20,7 +20,7 @@
 	3)timestamp > 60ms
 	USLEEP need time in microseconds
 */
-void	parse_input(char **argv, t_rules *rule)
+static void	parse_input(char **argv, t_rules *rule)
 {
 	rule->num_philos = ft_atol(argv[1]);
 	rule->time_to_die = ft_atol(argv[2]) * 1e3;
@@ -44,7 +44,7 @@ static void	assign_forks(t_philo *philo, t_fork *forks, int philo_position)
 	}
 }
 
-static void	philo_init(t_rules *rule)
+static int	philo_init(t_rules *rule)
 {
 	int		i;
 	t_philo	*philo;
@@ -57,34 +57,46 @@ static void	philo_init(t_rules *rule)
 		philo->full = false;
 		philo->total_meals = 0;
 		philo->rules = rule;
-		handle_mutex(&philo->philo_mutex, INIT);
+		if (handle_mutex(&philo->philo_mutex, INIT))
+			return (1);
 		assign_forks(philo, rule->forks, i);
 	}
+	return (0);
 }
 
-int	init_data(char **argv, t_rules *rule)
+static int	alloc_resources(t_rules *rule)
 {
-	int	i;
-
-	i = 0;
-	parse_input(argv, rule);
-	rule->end_simulation = false;
-	rule->all_threads_ready = false;
-	rule->threads_running_nbr = 0;
 	rule->philos = malloc(rule->num_philos * sizeof(t_philo));
 	if (!rule->philos)
 		return (1);
 	rule->forks = malloc(rule->num_philos * sizeof(t_fork));
 	if (!rule->forks)
 		return (1);
-	handle_mutex(&rule->rule_mutex, INIT);
-	handle_mutex(&rule->write_lock, INIT);
-	while (i < rule->num_philos)
+	return (0);
+}
+
+int	init_data(char **argv, t_rules *rule)
+{
+	int	i;
+
+	i = -1;
+	parse_input(argv, rule);
+	rule->end_simulation = false;
+	rule->all_threads_ready = false;
+	rule->threads_running_nbr = 0;
+	if (alloc_resources(rule))
+		return (1);
+	if (handle_mutex(&rule->rule_mutex, INIT))
+		return (1);
+	if (handle_mutex(&rule->write_lock, INIT))
+		return (1);
+	while (++i < rule->num_philos)
 	{
-		handle_mutex(&rule->forks[i].fork, INIT);
+		if (handle_mutex(&rule->forks[i].fork, INIT))
+			return (1);
 		rule->forks[i].fork_id = i;
-		i++;
 	}
-	philo_init(rule);
+	if (philo_init(rule))
+		return (1);
 	return (0);
 }

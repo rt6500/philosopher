@@ -12,7 +12,7 @@
 
 #include "../philo.h"
 
-int	is_number(const char *s)
+static int	is_number(const char *s)
 {
 	long long int	result;
 	int				i;

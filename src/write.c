@@ -37,30 +37,36 @@ static void	write_status_debug(t_philo_status status, t_philo *philo,
 		printf("%-6ld %d died\n", elapsed, philo->id);
 }
 
-void	write_status(t_philo_status status, t_philo *philo, bool debug)
+static void	print_status_line(t_philo_status status, t_philo *philo, \
+	long elapsed)
 {
-	long elapsed;
+	if ((status == TAKE_FIRST_FORK || status == TAKE_SECOND_FORK)
+		&& !simulation_finished(philo->rules))
+		printf("%-6ld %d has taken a fork\n", elapsed, philo->id);
+	else if ((status == EAT) && !simulation_finished(philo->rules))
+		printf("%-6ld %d is eating\n", elapsed, philo->id);
+	else if ((status == SLEEP) && !simulation_finished(philo->rules))
+		printf("%-6ld %d is sleeping\n", elapsed, philo->id);
+	else if ((status == THINK) && !simulation_finished(philo->rules))
+		printf("%-6ld %d is thinking\n", elapsed, philo->id);
+	else if ((status == DIED) && !simulation_finished(philo->rules))
+		printf("%-6ld %d died\n", elapsed, philo->id);
+}
 
-	// printf("philo %d: entering write_status\n", philo->id);
+int	write_status(t_philo_status status, t_philo *philo, bool debug)
+{
+	long	elapsed;
+
 	elapsed = gettime(MILLISECONDS) - philo->rules->start_time;
 	if (philo->full)
-		return ;
-	handle_mutex(&philo->rules->write_lock, LOCK);
+		return (0);
+	if (handle_mutex(&philo->rules->write_lock, LOCK))
+		return (1);
 	if (debug)
 		write_status_debug(status, philo, elapsed);
 	else
-	{
-		if ((status == TAKE_FIRST_FORK || status == TAKE_SECOND_FORK)
-			&& !simulation_finished(philo->rules))
-			printf("%-6ld %d has taken a fork\n", elapsed, philo->id);
-		else if ((status == EAT) && !simulation_finished(philo->rules))
-			printf("%-6ld %d is eating\n", elapsed, philo->id);
-		else if ((status == SLEEP) && !simulation_finished(philo->rules))
-			printf("%-6ld %d is sleeping\n", elapsed, philo->id);
-		else if ((status == THINK) && !simulation_finished(philo->rules))
-			printf("%-6ld %d is thinking\n", elapsed, philo->id);
-		else if ((status == DIED) && !simulation_finished(philo->rules))
-			printf("%-6ld %d died\n", elapsed, philo->id);
-	}
-	handle_mutex(&philo->rules->write_lock, UNLOCK);
+		print_status_line(status, philo, elapsed);
+	if (handle_mutex(&philo->rules->write_lock, UNLOCK))
+		return (1);
+	return (0);
 }

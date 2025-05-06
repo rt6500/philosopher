@@ -2,10 +2,23 @@ CC = cc
 CFLAGS = -Wall -Wextra -Werror -pthread -g #-fsanitize=thread -pthread
 NAME = philo
 
-SOURCES = src/main.c src/dinner.c src/getters_setters.c src/init.c \
-src/sync_utilis.c src/utilis_dinner.c src/utilis.c \
-src/utilis_thread_mutex.c src/utilis_timekeeper.c src/validate_input.c \
-src/write.c src/monitor.c
+SOURCES = \
+src/main.c \
+src/create_and_join_threads.c \
+src/debug.c \
+src/dinner.c \
+src/philo_actions.c \
+src/getters_setters.c \
+src/init.c \
+src/monitor.c \
+src/philo_actions.c \
+src/sync_utilis.c \
+src/thread_utilis.c \
+src/utilis_thread_mutex.c \
+src/utilis_timekeeper.c \
+src/utilis.c \
+src/validate_input.c \
+src/write.c  
 
 OBJECTS = $(patsubst src/%.c, objs/%.o, $(SOURCES))
 $(info OBJECTS = $(OBJECTS))

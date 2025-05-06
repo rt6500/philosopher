@@ -15,59 +15,69 @@
 /*
 SPINLOCK until all threads get ready
 */
-void	wait_all_threads(t_rules *rule)
+int	wait_all_threads(t_rules *rule)
 {
 	bool val;
 
 	while (1)
 	{
-		if (!get_bool(&rule->rule_mutex, &rule->all_threads_ready, &val))
-			break ;
+		if (get_bool(&rule->rule_mutex, &rule->all_threads_ready, &val))
+			return (1);
 		if (val)
 			break ;
 		usleep(1);
 	}
+	return (0);
 }
 
 /*
 monitor busy waits untill all threads are running
 */
 
-bool	all_threads_running(pthread_mutex_t *mutex, long *threads,
-		long num_philos)
+int	all_threads_running(pthread_mutex_t *mutex, long *threads, \
+	long num_philos, bool *result)
 {
-	bool	ret;
-
-	ret = false;
-	handle_mutex(mutex, LOCK);
-	if (*threads == num_philos)
-		ret = true;
-	handle_mutex(mutex, UNLOCK);
-	return (ret);
+	if (handle_mutex(mutex, LOCK))
+		return (1);
+	*result = (*threads == num_philos);
+	if (handle_mutex(mutex, UNLOCK))
+		return (1);
+	return (0);
 }
 
 // Increase threads running to snc with the moniter
-void	increase_long(pthread_mutex_t *mutex, long *value)
+int	increase_long(pthread_mutex_t *mutex, long *value)
 {
-	handle_mutex(mutex, LOCK);
+	if (handle_mutex(mutex, LOCK))
+		return (1);
 	(*value)++;
-	handle_mutex(mutex, UNLOCK);
+	if (handle_mutex(mutex, UNLOCK))
+		return (1);
+	return (0);
 }
 
 /*
 Make the system fair
 */
 
-void	de_synchronize_philo(t_philo *philo)
+int	de_synchronize_philo(t_philo *philo)
 {
 	if (philo->rules->num_philos % 2 == 0)
 	{
 		if (philo->id % 2 == 0)
-			smart_sleep(30e3, philo->rules);
+		{
+			if (smart_sleep(30e3, philo->rules))
+				return (1);
+		}
 	}
 	else
 	{
 		if (philo->id % 2)
-			think(philo, true);
+		{
+			if (think(philo, true))
+				return (1);
+		}
 	}
+	return (0);
 }
+

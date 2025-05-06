@@ -31,7 +31,6 @@ int	get_bool(pthread_mutex_t *mutex, bool *value, bool *out)
 {
 	if (handle_mutex(mutex, LOCK))
 		return (1);
-	// READING
 	*out = *value;
 	if (handle_mutex(mutex, UNLOCK))
 		return (1);
@@ -39,26 +38,30 @@ int	get_bool(pthread_mutex_t *mutex, bool *value, bool *out)
 }
 
 // LONG
-void	set_long(pthread_mutex_t *mutex, long *dest, long value)
+int	set_long(pthread_mutex_t *mutex, long *dest, long value)
 {
-	handle_mutex(mutex, LOCK);
+	if (handle_mutex(mutex, LOCK))
+		return (1);
 	*dest = value;
-	handle_mutex(mutex, UNLOCK);
+	if (handle_mutex(mutex, UNLOCK))
+		return (1);
+	return (0);
 }
 
 long	get_long(pthread_mutex_t *mutex, long *value)
 {
 	long	ret;
 
-	handle_mutex(mutex, LOCK);
+	if (handle_mutex(mutex, LOCK))
+		return (-1);
 	ret = *value;
-	handle_mutex(mutex, UNLOCK);
+	if (handle_mutex(mutex, UNLOCK))
+		return (-1);
 	return (ret);
 }
 
 // simulation finished?
-bool	simulation_finished(t_rules *rule)
+int	simulation_finished(t_rules *rule, bool *out)
 {
-	return (get_bool(&rule->rule_mutex, &rule->end_simulation));
+	return (get_bool(&rule->rule_mutex, &rule->end_simulation, out));
 }
-

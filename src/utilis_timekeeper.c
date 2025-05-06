@@ -12,23 +12,6 @@
 
 #include "../philo.h"
 
-void	error_exit(const char *error)
-{
-	printf("%s\n", error);
-	exit(EXIT_FAILURE);
-}
-
-// void	how_long(t_rules rule)
-// {
-// 	struct timeval	now;
-// 	long			elapsed_ms;
-
-// 	gettimeofday(&now, NULL);
-// 	elapsed_ms = (now.tv_sec - rule.start_time.tv_sec) * 1e3 + (now.tv_usec
-// 			- rule.start_time.tv_usec) / 1e3;
-// 	printf("elapsed time: %ld ms\n", elapsed_ms);
-// }
-
 /*
 gettimeofday
 

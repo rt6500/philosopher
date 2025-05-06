@@ -43,12 +43,6 @@ int	handle_mutex(pthread_mutex_t *mutex, t_opcode opcode)
 {
 	int	status;
 
-	// /*debug*/
-	// if (opcode == LOCK)
-	// 	printf("[MUTEX] Locking %p\n", (void *)mutex);
-	// else if (opcode == UNLOCK)
-	// 	printf("[MUTEX] Unlocking %p\n", (void *)mutex);
-	// /*debug*/
 	status = 0;
 	if (opcode == INIT)
 		status = pthread_mutex_init(mutex, NULL);
@@ -63,7 +57,7 @@ int	handle_mutex(pthread_mutex_t *mutex, t_opcode opcode)
 	return (handle_mutex_error(status, opcode));
 }
 
-static int	handle_thread_error(int status, t_opcode opcode)
+int	handle_thread_error(int status, t_opcode opcode)
 {
 	if (status == 0)
 		return (0);
@@ -86,19 +80,26 @@ static int	handle_thread_error(int status, t_opcode opcode)
 	return (1);
 }
 
-int	handle_thread(pthread_t *thread, void *(*foo)(void *), void *data,
-		t_opcode opcode)
-{
-	int	status;
+// int	handle_thread(pthread_t *thread, void *(*foo)(void *), void *data,
+// 		t_opcode opcode, void **ret)
+// {
+// 	int	status;
 
-	status = 0;
-	if (opcode == CREATE)
-		status = pthread_create(thread, NULL, foo, data);
-	else if (opcode == JOIN)
-		status = pthread_join(*thread, NULL);
-	else if (opcode == DETACH)
-		status = pthread_detach(*thread);
-	else
-		return (printf("Error\nUnknown operation\n"), 1);
-	return (handle_thread_error(status, opcode));
-}
+// 	status = 0;
+// 	if (opcode == CREATE)
+// 		status = pthread_create(thread, NULL, foo, data);
+// 	else if (opcode == JOIN)
+// 		status = pthread_join(*thread, ret);
+// 	else if (opcode == DETACH)
+// 		status = pthread_detach(*thread);
+// 	else
+// 		return (printf("Error\nUnknown operation\n"), 1);
+// 	if (handle_thread_error(status, opcode))
+// 		return (1);
+// 	if (opcode == JOIN && ret && *ret == NULL)
+// 	{
+// 		printf("Error\nThread returned NULL\n");
+// 		return (1);
+// 	}
+// 	return (0);
+// }
