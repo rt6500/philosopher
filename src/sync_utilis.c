@@ -17,7 +17,7 @@ SPINLOCK until all threads get ready
 */
 int	wait_all_threads(t_rules *rule)
 {
-	bool val;
+	bool	val;
 
 	while (1)
 	{
@@ -80,4 +80,3 @@ int	de_synchronize_philo(t_philo *philo)
 	}
 	return (0);
 }
-

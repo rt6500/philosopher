@@ -17,39 +17,45 @@ timestamp_in_ms X has taken a fork
 [time_ms] [philo_id] [action]
 */
 
-static void	write_status_debug(t_philo_status status, t_philo *philo,
+static void	write_status_debug(t_philo_status status, t_philo *philo, \
 		long elapsed)
 {
-	if ((status == TAKE_FIRST_FORK) && !simulation_finished(philo->rules))
-		printf("%-6ld %d has taken a 1st fork of %d\n", elapsed, philo->id,
+	bool	finished;
+
+	simulation_finished(philo->rules, &finished);
+	if ((status == TAKE_FIRST_FORK) && !finished)
+		printf("%-6ld %d has taken a 1st fork of %d\n", elapsed, philo->id, \
 			philo->first_fork->fork_id);
-	if ((status == TAKE_SECOND_FORK) && !simulation_finished(philo->rules))
-		printf("%-6ld %d has taken a 2nd fork of %d\n", elapsed, philo->id,
+	if ((status == TAKE_SECOND_FORK) && !finished)
+		printf("%-6ld %d has taken a 2nd fork of %d\n", elapsed, philo->id, \
 			philo->second_fork->fork_id);
-	else if ((status == EAT) && !simulation_finished(philo->rules))
-		printf("%-6ld %d is eating. total meals : %ld\n", elapsed, philo->id,
+	else if ((status == EAT) && !finished)
+		printf("%-6ld %d is eating. total meals : %ld\n", elapsed, philo->id, \
 			philo->total_meals);
-	else if ((status == SLEEP) && !simulation_finished(philo->rules))
+	else if ((status == SLEEP) && !finished)
 		printf("%-6ld %d is sleeping\n", elapsed, philo->id);
-	else if ((status == THINK) && !simulation_finished(philo->rules))
+	else if ((status == THINK) && !finished)
 		printf("%-6ld %d is thinking\n", elapsed, philo->id);
-	else if ((status == DIED) && !simulation_finished(philo->rules))
+	else if ((status == DIED) && !finished)
 		printf("%-6ld %d died\n", elapsed, philo->id);
 }
 
 static void	print_status_line(t_philo_status status, t_philo *philo, \
 	long elapsed)
 {
-	if ((status == TAKE_FIRST_FORK || status == TAKE_SECOND_FORK)
-		&& !simulation_finished(philo->rules))
+	bool	finished;
+
+	simulation_finished(philo->rules, &finished);
+	if ((status == TAKE_FIRST_FORK || status == TAKE_SECOND_FORK) \
+		&& !finished)
 		printf("%-6ld %d has taken a fork\n", elapsed, philo->id);
-	else if ((status == EAT) && !simulation_finished(philo->rules))
+	else if ((status == EAT) && !finished)
 		printf("%-6ld %d is eating\n", elapsed, philo->id);
-	else if ((status == SLEEP) && !simulation_finished(philo->rules))
+	else if ((status == SLEEP) && !finished)
 		printf("%-6ld %d is sleeping\n", elapsed, philo->id);
-	else if ((status == THINK) && !simulation_finished(philo->rules))
+	else if ((status == THINK) && !finished)
 		printf("%-6ld %d is thinking\n", elapsed, philo->id);
-	else if ((status == DIED) && !simulation_finished(philo->rules))
+	else if ((status == DIED) && !finished)
 		printf("%-6ld %d died\n", elapsed, philo->id);
 }
 

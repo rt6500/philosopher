@@ -20,7 +20,6 @@ static int	philo_died(t_philo *philo, bool *died)
 	long	elapsed;
 	long	time_to_die;
 	bool	full;
-	// long	last_meal;
 	long	val;
 
 	if (get_bool(&philo->philo_mutex, &philo->full, &full))
@@ -50,7 +49,7 @@ static int	check_philos_state(t_rules *rule)
 	{
 		if (philo_died(rule->philos + i, &died))
 			return (1);
-		else if (died)
+		if (died)
 		{
 			if (simulation_finished(rule, &sim_done))
 				return (1);
@@ -67,28 +66,34 @@ static int	check_philos_state(t_rules *rule)
 	return (0);
 }
 
-void	*monitor_dinner(void *data)
+static int	wait_for_threads(t_rules *rule)
 {
-	int		i;
-	t_rules	*rule;
 	bool	state;
-	bool	finished;
 
-	rule = (t_rules *)data;
 	while (1)
 	{
 		if (all_threads_running(&rule->rule_mutex, &rule->threads_running_nbr, \
 		rule->num_philos, &state))
-			return ((void *)1);
+			return (1);
 		if (state)
 			break ;
 		usleep(1);
 	}
+	return (0);
+}
+
+void	*monitor_dinner(void *data)
+{
+	t_rules	*rule;
+	bool	finished;
+
+	rule = (t_rules *)data;
+	if (wait_for_threads(rule))
+		return ((void *)1);
 	if (simulation_finished(rule, &finished))
 		return ((void *)1);
 	while (!finished)
 	{
-		i = -1;
 		if (check_philos_state(rule))
 			return ((void *)1);
 		if (simulation_finished(rule, &finished))

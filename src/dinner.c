@@ -80,9 +80,11 @@ int	start_dinner(t_rules *rule)
 		return (1);
 	if (create_threads(rule))
 		return (1);
+	rule->start_time = gettime(MILLISECONDS);
 	if (set_bool(&rule->rule_mutex, &rule->all_threads_ready, true))
 		return (1);
-	rule->start_time = gettime(MILLISECONDS);
+	if (DEBUG_MODE == 1)
+		print_assigned_forks(rule);
 	if (join_threads(rule))
 		return (1);
 	return (0);

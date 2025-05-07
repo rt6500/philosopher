@@ -30,7 +30,7 @@ int	think(t_philo *philo, bool pre_simulation)
 		return (0);
 	t_eat = philo->rules->time_to_eat;
 	t_sleep = philo->rules->time_to_sleep;
-	t_think = t_eat * 2- t_sleep;
+	t_think = t_eat * 2 - t_sleep;
 	if (t_think < 0)
 		t_think = 0;
 	if (smart_sleep(t_think * 0.42, philo->rules))
@@ -50,24 +50,24 @@ void	*one_philo(void *arg)
 
 	philo = (t_philo *)arg;
 	if (wait_all_threads(philo->rules))
-		return ((void *)1);
+		return (NULL);
 	if (set_long(&philo->philo_mutex, &philo->last_meal_time, \
 		gettime(MILLISECONDS)))
-		return ((void *)1);
+		return (NULL);
 	if (increase_long(&philo->rules->rule_mutex, \
 		&philo->rules->threads_running_nbr))
-		return ((void *)1);
+		return (NULL);
 	if (write_status(TAKE_FIRST_FORK, philo, DEBUG_MODE))
-		return ((void *)1);
+		return (NULL);
 	while (1)
 	{
 		if (simulation_finished(philo->rules, &finished))
-			return ((void *)1);
+			return (NULL);
 		if (finished)
 			break ;
 		usleep(1);
 	}
-	return ((void *)0);
+	return (philo);
 }
 
 static int	grab_forks(t_philo *philo)
@@ -79,6 +79,15 @@ static int	grab_forks(t_philo *philo)
 	if (handle_mutex(&philo->second_fork->fork, LOCK))
 		return (1);
 	if (write_status(TAKE_SECOND_FORK, philo, DEBUG_MODE))
+		return (1);
+	return (0);
+}
+
+static int	drop_forks(t_philo *philo)
+{
+	if (handle_mutex(&philo->first_fork->fork, UNLOCK))
+		return (1);
+	if (handle_mutex(&philo->second_fork->fork, UNLOCK))
 		return (1);
 	return (0);
 }
@@ -111,9 +120,7 @@ int	eat(t_philo *philo)
 			if (set_bool(&philo->philo_mutex, &philo->full, true))
 				return (1);
 		}
-		if (handle_mutex(&philo->first_fork->fork, UNLOCK))
-			return (1);
-		if (handle_mutex(&philo->second_fork->fork, UNLOCK))
+		if (drop_forks(philo))
 			return (1);
 	}
 	return (0);

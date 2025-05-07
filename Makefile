@@ -11,7 +11,6 @@ src/philo_actions.c \
 src/getters_setters.c \
 src/init.c \
 src/monitor.c \
-src/philo_actions.c \
 src/sync_utilis.c \
 src/thread_utilis.c \
 src/utilis_thread_mutex.c \

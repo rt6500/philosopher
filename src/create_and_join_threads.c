@@ -68,7 +68,7 @@ int	join_threads(t_rules *rule)
 	status = pthread_join(rule->monitor, &ret);
 	if (handle_thread_error(status, JOIN))
 		return (1);
-	if (ret == NULL)
-		return (printf("Error\nMoniter thread returned NULL\n"), 1);
+	if (ret != 0)
+		return (printf("Error\nMonitor thread error\n"), 1);
 	return (0);
 }

@@ -21,7 +21,7 @@
 #include <unistd.h>   //write, usleep
 
 /*write function macro*/
-#define DEBUG_MODE 0
+#define DEBUG_MODE 1
 
 //*** structures ***/
 typedef struct s_rules	t_rules;
@@ -155,7 +155,7 @@ int						write_status(t_philo_status status, t_philo *philo, \
 							bool debug);
 
 // monitor.c
-void						*monitor_dinner(void *data);
+void					*monitor_dinner(void *data);
 
 // debug.c
 void					print_assigned_forks(t_rules *rules);
