@@ -32,11 +32,10 @@ static int	dinner_setup(t_philo *philo)
 }
 
 /*
-0) wait all philos, synchro start
+0) wait all philos, sync start
 1) endless loop philo
 // data =  &rule->philos[i]
 */
-
 void	*dinner_simulation(void *data)
 {
 	t_philo	*philo;
@@ -64,16 +63,15 @@ void	*dinner_simulation(void *data)
 /*
 actural dinner
 ./philo 5 100 100 100 [4]
-0) if no meals, return (->[0]);
-0.1) If only one philo->ad hoc function
+0)if no meals, return (->[0]);
 1)Create all threads, all philosophers.
-2)Create a monitor thread for death of philos.
-3)Synchronize the beggining of the simulation
+2) If only one philo->ad hoc function
+3)Create a monitor thread for death of philos.
+4)Synchronize the beggining of the simulation
 	pthread_create->philo starts running.
 	every philo starts simultaneously.
-4) JOIN everyone.
+5) JOIN everyone.
 */
-
 int	start_dinner(t_rules *rule)
 {
 	if (rule->limit_meals == 0)

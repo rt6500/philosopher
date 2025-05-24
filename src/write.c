@@ -16,7 +16,6 @@
 timestamp_in_ms X has taken a fork
 [time_ms] [philo_id] [action]
 */
-
 static void	write_status_debug(t_philo_status status, t_philo *philo, \
 		long elapsed)
 {

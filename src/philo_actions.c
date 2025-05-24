@@ -13,7 +13,9 @@
 #include "../philo.h"
 
 /*
-thinking routine
+thinking routine for improving the survival rate
+if the number of philos is odds, it's better to control thinking time.
+To prevent too thinking in a row.
 */
 int	think(t_philo *philo, bool pre_simulation)
 {
@@ -46,7 +48,6 @@ for only one philo
 void	*one_philo(void *arg)
 {
 	t_philo	*philo;
-	bool	finished;
 
 	philo = (t_philo *)arg;
 	if (wait_all_threads(philo->rules))
@@ -59,14 +60,9 @@ void	*one_philo(void *arg)
 		return (NULL);
 	if (write_status(TAKE_FIRST_FORK, philo, DEBUG_MODE))
 		return (NULL);
-	while (1)
-	{
-		if (simulation_finished(philo->rules, &finished))
-			return (NULL);
-		if (finished)
-			break ;
-		usleep(1);
-	}
+	usleep(philo->rules->time_to_die);
+	if (write_status(DIED, philo, DEBUG_MODE))
+		return (NULL);
 	return (philo);
 }
 

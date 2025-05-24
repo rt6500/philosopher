@@ -21,7 +21,10 @@ int	create_threads(t_rules *rule)
 	{
 		status = pthread_create(&rule->philos[0].thread_id, NULL, \
 			one_philo, &rule->philos[0]);
-		return (handle_thread_error(status, CREATE));
+		if (handle_thread_error(status, CREATE))
+			return (1);
+		rule->monitor = 0;
+		return (0);
 	}
 	i = -1;
 	while (++i < rule->num_philos)
@@ -46,7 +49,8 @@ static int	join_philo_threads(t_rules *rule)
 	while (++i < rule->num_philos)
 	{
 		ret = NULL;
-		status = pthread_join(rule->philos[i].thread_id, &ret);
+		if (rule->philos[i].thread_id)
+			status = pthread_join(rule->philos[i].thread_id, &ret);
 		if (handle_thread_error(status, JOIN))
 			return (1);
 		if (ret == NULL)
@@ -60,12 +64,14 @@ int	join_threads(t_rules *rule)
 	int		status;
 	void	*ret;
 
+	status = 0;
 	if (join_philo_threads(rule))
 		return (1);
 	if (set_bool(&rule->rule_mutex, &rule->end_simulation, true))
 		return (1);
 	ret = NULL;
-	status = pthread_join(rule->monitor, &ret);
+	if (rule->monitor)
+		status = pthread_join(rule->monitor, &ret);
 	if (handle_thread_error(status, JOIN))
 		return (1);
 	if (ret != 0)

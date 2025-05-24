@@ -17,8 +17,8 @@
 	[0]		[1]	[2]	[3]	[4]	[5]
 	1)actual numbrs
 	2)not > INTMAX
-	3)timestamp > 60ms
 	USLEEP need time in microseconds
+	time_to_die & time_to_eat & time_to_sleep are converted to microseconds.
 */
 static void	parse_input(char **argv, t_rules *rule)
 {
@@ -32,6 +32,13 @@ static void	parse_input(char **argv, t_rules *rule)
 		rule->limit_meals = -1;
 }
 
+/*
+fork_id:      0, 1, 2, 3, 4, ..., n-1, (n % n = 0)
+philo_position: 0, 1, 2, 3, 4, ..., n-1
+philo_id:       1, 2, 3, 4, 5, ..., n
+1. Default assignment
+2. Swqp if philosopher has even ID
+*/
 static void	assign_forks(t_philo *philo, t_fork *forks, int philo_position)
 {
 	philo->first_fork = &forks[(philo_position + 1) % philo->rules->num_philos];
@@ -39,11 +46,15 @@ static void	assign_forks(t_philo *philo, t_fork *forks, int philo_position)
 	if (philo->id % 2 == 0)
 	{
 		philo->first_fork = &forks[philo_position];
-		philo->second_fork = &forks[(philo_position + 1)
+		philo->second_fork = &forks[(philo_position + 1) \
 			% philo->rules->num_philos];
 	}
 }
 
+/*
+philo->id: 1, 2, ...
+
+*/
 static int	philo_init(t_rules *rule)
 {
 	int		i;
@@ -75,6 +86,9 @@ static int	alloc_resources(t_rules *rule)
 	return (0);
 }
 
+/*
+fork_id: 0, 1, 2, ...
+*/
 int	init_data(char **argv, t_rules *rule)
 {
 	int	i;

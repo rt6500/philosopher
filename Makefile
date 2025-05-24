@@ -1,11 +1,10 @@
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -pthread -g #-fsanitize=thread -pthread
+CFLAGS = -Wall -Wextra -Werror -pthread -g
 NAME = philo
 
 SOURCES = \
 src/main.c \
 src/create_and_join_threads.c \
-src/debug.c \
 src/dinner.c \
 src/philo_actions.c \
 src/getters_setters.c \

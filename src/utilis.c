@@ -45,3 +45,19 @@ void	clean(t_rules *rule)
 	free(rule->forks);
 	free(rule->philos);
 }
+
+void	print_assigned_forks(t_rules *rules)
+{
+	int		i;
+	t_philo	*philo;
+
+	i = 0;
+	while (i < rules->num_philos)
+	{
+		philo = &rules->philos[i];
+		printf("Philo %d:\n", philo->id);
+		printf("  First fork : %d\n", philo->first_fork->fork_id);
+		printf("  Second fork: %d\n", philo->second_fork->fork_id);
+		i++;
+	}
+}

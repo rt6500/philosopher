@@ -21,7 +21,7 @@
 #include <unistd.h>   //write, usleep
 
 /*write function macro*/
-#define DEBUG_MODE 1
+#define DEBUG_MODE 0
 
 //*** structures ***/
 typedef struct s_rules	t_rules;
@@ -109,6 +109,7 @@ int						init_data(char **argv, t_rules *rule);
 // utilis.c
 long					ft_atol(const char *str);
 void					clean(t_rules *rule);
+void					print_assigned_forks(t_rules *rules);
 
 // utilis_thread_mutex.c
 int						handle_mutex(pthread_mutex_t *mutex, t_opcode opcode);
@@ -156,6 +157,3 @@ int						write_status(t_philo_status status, t_philo *philo, \
 
 // monitor.c
 void					*monitor_dinner(void *data);
-
-// debug.c
-void					print_assigned_forks(t_rules *rules);

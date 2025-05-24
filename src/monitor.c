@@ -12,9 +12,6 @@
 
 #include "../philo.h"
 
-/*
-last_meal --> last_meal
-*/
 static int	philo_died(t_philo *philo, bool *died)
 {
 	long	elapsed;

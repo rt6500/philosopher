@@ -79,27 +79,3 @@ int	handle_thread_error(int status, t_opcode opcode)
 		printf("Error\nUnkown error (%d)\n", status);
 	return (1);
 }
-
-// int	handle_thread(pthread_t *thread, void *(*foo)(void *), void *data,
-// 		t_opcode opcode, void **ret)
-// {
-// 	int	status;
-
-// 	status = 0;
-// 	if (opcode == CREATE)
-// 		status = pthread_create(thread, NULL, foo, data);
-// 	else if (opcode == JOIN)
-// 		status = pthread_join(*thread, ret);
-// 	else if (opcode == DETACH)
-// 		status = pthread_detach(*thread);
-// 	else
-// 		return (printf("Error\nUnknown operation\n"), 1);
-// 	if (handle_thread_error(status, opcode))
-// 		return (1);
-// 	if (opcode == JOIN && ret && *ret == NULL)
-// 	{
-// 		printf("Error\nThread returned NULL\n");
-// 		return (1);
-// 	}
-// 	return (0);
-// }

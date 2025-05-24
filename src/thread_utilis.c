@@ -12,6 +12,8 @@
 
 #include "../philo.h"
 /*
+usleep if there is planty of time till the duration.
+otherwise check duration often, and when reach the duration, return 0
 in microseconds!
 */
 int	smart_sleep(long duration, t_rules *rules)
