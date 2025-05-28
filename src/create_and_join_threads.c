@@ -34,8 +34,7 @@ int	create_threads(t_rules *rule)
 		if (handle_thread_error(status, CREATE))
 			return (1);
 	}
-	status = pthread_create(&rule->monitor, NULL, monitor_dinner, \
-	rule);
+	status = pthread_create(&rule->monitor, NULL, monitor_dinner, rule);
 	return (handle_thread_error(status, CREATE));
 }
 

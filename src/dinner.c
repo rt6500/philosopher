@@ -50,9 +50,13 @@ void	*dinner_simulation(void *data)
 			break ;
 		if (eat(philo))
 			return (NULL);
+		if (simulation_finished(philo->rules, &finished))
+			return (NULL);
+		if (finished)
+			break ;
 		if (write_status(SLEEP, philo, DEBUG_MODE))
 			return (NULL);
-		if (smart_sleep(philo->rules->time_to_sleep, philo->rules))
+		if (smart_sleep(philo->rules->time_to_sleep * 1e3, philo->rules))
 			return (NULL);
 		if (think(philo, false))
 			return (NULL);

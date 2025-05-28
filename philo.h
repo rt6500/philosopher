@@ -138,6 +138,9 @@ int						think(t_philo *philo, bool pre_simulation);
 void					*one_philo(void *arg);
 int						eat(t_philo *philo);
 
+// philo_actions_utilis.c
+int						try_eating(t_philo *philo);
+
 // thread_utilis.c
 int						smart_sleep(long duration, t_rules *rules);
 
@@ -156,4 +159,5 @@ int						write_status(t_philo_status status, t_philo *philo, \
 							bool debug);
 
 // monitor.c
+int						philo_died(t_philo *philo, bool *died);
 void					*monitor_dinner(void *data);

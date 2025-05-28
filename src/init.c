@@ -18,14 +18,14 @@
 	1)actual numbrs
 	2)not > INTMAX
 	USLEEP need time in microseconds
-	time_to_die & time_to_eat & time_to_sleep are converted to microseconds.
+	time_to_die & time_to_eat & time_to_sleep are in milliseconds.
 */
 static void	parse_input(char **argv, t_rules *rule)
 {
 	rule->num_philos = ft_atol(argv[1]);
-	rule->time_to_die = ft_atol(argv[2]) * 1e3;
-	rule->time_to_eat = ft_atol(argv[3]) * 1e3;
-	rule->time_to_sleep = ft_atol(argv[4]) * 1e3;
+	rule->time_to_die = ft_atol(argv[2]);
+	rule->time_to_eat = ft_atol(argv[3]);
+	rule->time_to_sleep = ft_atol(argv[4]);
 	if (argv[5])
 		rule->limit_meals = ft_atol(argv[5]);
 	else
