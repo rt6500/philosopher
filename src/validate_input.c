@@ -33,12 +33,29 @@ static int	is_number(const char *s)
 	return (1);
 }
 
+static int	is_input_of_zero(int argc, char **argv)
+{
+	int	i;
+
+	i = 1;
+
+	while (i < argc)
+	{
+		if (!ft_atol(argv[i]))
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
 int	is_valid_input(int argc, char **argv)
 {
 	int	i;
 
 	i = 1;
-	if (argc == 5 || argc == 6)
+	if (argc < 5 || argc > 6)
+		return (0);
+	else
 	{
 		while (i < argc)
 		{
@@ -50,8 +67,8 @@ int	is_valid_input(int argc, char **argv)
 				return (0);
 			i++;
 		}
+		if (is_input_of_zero(argc, argv))
+			return (0);
 		return (1);
 	}
-	else
-		return (0);
 }

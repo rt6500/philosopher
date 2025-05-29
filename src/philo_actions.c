@@ -68,13 +68,7 @@ void	*one_philo(void *arg)
 
 int	eat(t_philo *philo)
 {
-	bool	died;
-
 	if (philo->full)
-		return (0);
-	if (philo_died(philo, &died))
-		return (1);
-	if (died)
 		return (0);
 	return (try_eating(philo));
 }

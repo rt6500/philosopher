@@ -81,3 +81,64 @@ int	write_status(t_philo_status status, t_philo *philo, bool debug)
 		return (1);
 	return (0);
 }
+
+// int write_status(t_philo_status status, t_philo *philo, bool debug)
+// {
+// 	long	elapsed;
+//     t_rules *rules = philo->rules;
+
+// 	if (pthread_mutex_trylock(&rules->write_lock) != 0)
+//     	printf("Couldn't acquire write_lock\n");
+//     // pthread_mutex_lock(&rules->write_lock);       // 1) grab the single print lock
+//     if (rules->end_simulation && status != DIED)  // 2) if someone already died, skip all but DIED
+//     {
+//         pthread_mutex_unlock(&rules->write_lock);
+//         return 0;
+//     }
+// 	elapsed = gettime(MILLISECONDS) - philo->rules->start_time;
+// 	if (debug)
+// 		write_status_debug(status, philo, elapsed);
+// 	else
+// 		print_status_line(status, philo, elapsed);
+// 	if (handle_mutex(&philo->rules->write_lock, UNLOCK))
+// 		return (1);
+//     return 0;
+// }
+
+// int write_status(t_philo_status status, t_philo *philo, bool debug)
+// {
+// 	long elapsed;
+// 	t_rules *rules = philo->rules;
+// 	int rc;
+
+// 	rc = pthread_mutex_lock(&rules->write_lock);
+// 	if (rc != 0)
+// 	{
+// 		printf("Error: Failed to lock write_lock (code %d)\n", rc);
+// 		return 1;
+// 	}
+
+// 	if (rules->end_simulation && status != DIED)
+// 	{
+// 		rc = pthread_mutex_unlock(&rules->write_lock);
+// 		if (rc != 0)
+// 			printf("Error: Failed to unlock write_lock (code %d)\n", rc);
+// 		return 0;
+// 	}
+
+// 	elapsed = gettime(MILLISECONDS) - rules->start_time;
+
+// 	if (debug)
+// 		write_status_debug(status, philo, elapsed);
+// 	else
+// 		print_status_line(status, philo, elapsed);
+
+// 	rc = pthread_mutex_unlock(&rules->write_lock);
+// 	if (rc != 0)
+// 	{
+// 		printf("Error: Failed to unlock write_lock (code %d)\n", rc);
+// 		return 1;
+// 	}
+
+// 	return 0;
+// }

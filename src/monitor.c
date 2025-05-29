@@ -70,7 +70,11 @@ static int	check_philos_state(t_rules *rule)
 					return (1);
 				if (set_bool(&rule->rule_mutex, &rule->end_simulation, true))
 					return (1);
-				return (0);
+				// pthread_mutex_lock(&rule->write_lock);
+				// write_status(DIED, rule->philos + i, DEBUG_MODE);
+				// set_bool(&rule->rule_mutex, &rule->end_simulation, true);
+				// pthread_mutex_unlock(&rule->write_lock);
+				// return (0);
 			}
 		}
 	}

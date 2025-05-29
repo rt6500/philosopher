@@ -36,32 +36,63 @@ static int	dinner_setup(t_philo *philo)
 1) endless loop philo
 // data =  &rule->philos[i]
 */
-void	*dinner_simulation(void *data)
-{
-	t_philo	*philo;
-	bool	finished;
+// void	*dinner_simulation(void *data)
+// {
+// 	t_philo	*philo;
+// 	bool	finished;
 
-	philo = (t_philo *)data;
-	if (dinner_setup(philo))
-		return (NULL);
-	while (!simulation_finished(philo->rules, &finished) && !finished)
-	{
-		if (philo->full)
-			break ;
-		if (eat(philo))
-			return (NULL);
-		if (simulation_finished(philo->rules, &finished))
-			return (NULL);
-		if (finished)
-			break ;
-		if (write_status(SLEEP, philo, DEBUG_MODE))
-			return (NULL);
-		if (smart_sleep(philo->rules->time_to_sleep * 1e3, philo->rules))
-			return (NULL);
-		if (think(philo, false))
-			return (NULL);
-	}
-	return (philo);
+// 	philo = (t_philo *)data;
+// 	if (dinner_setup(philo))
+// 		return (NULL);
+// 	while (!simulation_finished(philo->rules, &finished) && !finished)
+// 	{
+// 		if (philo->full)
+// 			break ;
+// 		if (eat(philo))
+// 			return (NULL);
+// 		if (simulation_finished(philo->rules, &finished))
+// 			return (NULL);
+// 		if (finished)
+// 			break ;
+// 		if (write_status(SLEEP, philo, DEBUG_MODE))
+// 			return (NULL);
+// 		if (smart_sleep(philo->rules->time_to_sleep * 1e3, philo->rules))
+// 			return (NULL);
+// 		if (think(philo, false))
+// 			return (NULL);
+// 	}
+// 	return (philo);
+// }
+
+void *dinner_simulation(void *data)
+{
+    t_philo *p = data;
+    // bool     finished;
+
+    if (dinner_setup(p))
+        return NULL;
+
+    while (!p->rules->end_simulation)
+    {
+        int ate = eat(p);
+        if (ate < 0)
+            return NULL;              // error
+        if (ate == 0)
+            break;                    // full or dead—stop any more actions
+
+        // at this point, the philosopher *just* ate
+        if (p->full || p->rules->end_simulation)
+            break;
+
+        // Now and only now do we sleep
+        write_status(SLEEP, p, DEBUG_MODE);
+        smart_sleep(p->rules->time_to_sleep, p->rules);
+
+        if (p->rules->end_simulation)
+            break;
+        write_status(THINK, p, DEBUG_MODE);
+    }
+    return p;
 }
 
 /*
