@@ -14,8 +14,9 @@
 
 /*
 SPINLOCK until all threads get ready
+sync the start of the philos and the monitor
 */
-int	wait_all_threads(t_rules *rule)
+int	wait_for_start_signal(t_rules *rule)
 {
 	bool	val;
 
@@ -33,8 +34,8 @@ int	wait_all_threads(t_rules *rule)
 /*
 monitor busy waits untill all threads are running
 */
-int	all_threads_running(pthread_mutex_t *mutex, long *threads, \
-	long num_philos, bool *result)
+int	all_threads_running(pthread_mutex_t *mutex, long *threads, long num_philos,
+		bool *result)
 {
 	if (handle_mutex(mutex, LOCK))
 		return (1);
@@ -58,7 +59,7 @@ int	increase_long(pthread_mutex_t *mutex, long *value)
 /*
 Make the system fair
 1. if number of philos is even
-	id:0, 2, 4, ... => wait briefly 
+	id:2, 4, ... => wait briefly
 	=> allow ID:1, 3, 5, ... to grab forks first.
 2. if the number of philos is odd
 	id:1, 3, 5, ... think first.

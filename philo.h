@@ -21,7 +21,7 @@
 #include <unistd.h>   //write, usleep
 
 /*write function macro*/
-#define DEBUG_MODE 0
+#define DEBUG_MODE 1
 
 //*** structures ***/
 typedef struct s_rules	t_rules;
@@ -116,12 +116,12 @@ int						handle_mutex(pthread_mutex_t *mutex, t_opcode opcode);
 int						handle_thread_error(int status, t_opcode opcode);
 
 // getters_setters.c
-int						set_bool(pthread_mutex_t *mutex, bool *dest, \
-	bool value);
-int						get_bool(pthread_mutex_t *mutex, bool *value, \
-	bool *val);
-int						set_long(pthread_mutex_t *mutex, long *dest, \
-	long value);
+int						set_bool(pthread_mutex_t *mutex, bool *dest,
+							bool value);
+int						get_bool(pthread_mutex_t *mutex, bool *value,
+							bool *val);
+int						set_long(pthread_mutex_t *mutex, long *dest,
+							long value);
 long					get_long(pthread_mutex_t *mutex, long *value);
 int						simulation_finished(t_rules *rule, bool *out);
 
@@ -138,16 +138,16 @@ int						think(t_philo *philo, bool pre_simulation);
 void					*one_philo(void *arg);
 int						eat(t_philo *philo);
 
-// philo_actions_utilis.c
-int						try_eating(t_philo *philo);
+// philo_actions_eat.c
+int						eat(t_philo *philo);
 
 // thread_utilis.c
 int						smart_sleep(long duration, t_rules *rules);
 
 // sync_utilis.c
-int						wait_all_threads(t_rules *rule);
-int						all_threads_running(pthread_mutex_t *mutex, \
-	long *threads, long num_philos, bool *result);
+int						wait_for_start_signal(t_rules *rule);
+int						all_threads_running(pthread_mutex_t *mutex,
+							long *threads, long num_philos, bool *result);
 int						increase_long(pthread_mutex_t *mutex, long *value);
 int						de_synchronize_philo(t_philo *philo);
 
@@ -155,7 +155,7 @@ int						de_synchronize_philo(t_philo *philo);
 long					gettime(t_time_code time_code);
 
 // write.c
-int						write_status(t_philo_status status, t_philo *philo, \
+int						write_status(t_philo_status status, t_philo *philo,
 							bool debug);
 
 // monitor.c

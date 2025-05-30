@@ -50,13 +50,13 @@ void	*one_philo(void *arg)
 	t_philo	*philo;
 
 	philo = (t_philo *)arg;
-	if (wait_all_threads(philo->rules))
+	if (wait_for_start_signal(philo->rules))
 		return (NULL);
-	if (set_long(&philo->philo_mutex, &philo->last_meal_time, \
-		gettime(MILLISECONDS)))
+	if (set_long(&philo->philo_mutex, &philo->last_meal_time,
+			gettime(MILLISECONDS)))
 		return (NULL);
-	if (increase_long(&philo->rules->rule_mutex, \
-		&philo->rules->threads_running_nbr))
+	if (increase_long(&philo->rules->rule_mutex,
+			&philo->rules->threads_running_nbr))
 		return (NULL);
 	if (write_status(TAKE_FIRST_FORK, philo, DEBUG_MODE))
 		return (NULL);
@@ -64,17 +64,4 @@ void	*one_philo(void *arg)
 	if (write_status(DIED, philo, DEBUG_MODE))
 		return (NULL);
 	return (philo);
-}
-
-int	eat(t_philo *philo)
-{
-	bool	died;
-
-	if (philo->full)
-		return (0);
-	if (philo_died(philo, &died))
-		return (1);
-	if (died)
-		return (0);
-	return (try_eating(philo));
 }

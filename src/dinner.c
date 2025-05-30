@@ -14,20 +14,44 @@
 
 static int	dinner_setup(t_philo *philo)
 {
-	bool	finished;
+	if (wait_for_start_signal(philo->rules))
+		return (1);
+	if (increase_long(&philo->rules->rule_mutex,
+			&philo->rules->threads_running_nbr))
+		return (1);
+	if (set_long(&philo->philo_mutex, &philo->last_meal_time,
+			gettime(MILLISECONDS)))
+		return (1);
+	// if (de_synchronize_philo(philo))
+	// 	return (1);
+	return (0);
+}
 
-	if (wait_all_threads(philo->rules))
-		return (1);
-	if (increase_long(&philo->rules->rule_mutex, \
-		&philo->rules->threads_running_nbr))
-		return (1);
-	if (set_long(&philo->philo_mutex, &philo->last_meal_time, \
-		gettime(MILLISECONDS)))
-		return (1);
-	if (de_synchronize_philo(philo))
-		return (1);
-	if (simulation_finished(philo->rules, &finished))
-		return (1);
+static int	philo_routine_loop(t_philo *philo)
+{
+	bool	finished;
+	int		rc;
+
+	while (!simulation_finished(philo->rules, &finished) && !finished)
+	{
+		if (philo->full)
+			break ;
+		rc = eat(philo);
+		if (rc == 1)
+			return (1);
+		else if (rc == 2)
+			break ;
+		if (simulation_finished(philo->rules, &finished))
+			return (1);
+		if (finished)
+			break ;
+		if (write_status(SLEEP, philo, DEBUG_MODE))
+			return (1);
+		if (smart_sleep(philo->rules->time_to_sleep * 1e3, philo->rules))
+			return (1);
+		if (think(philo, false))
+			return (1);
+	}
 	return (0);
 }
 
@@ -39,28 +63,12 @@ static int	dinner_setup(t_philo *philo)
 void	*dinner_simulation(void *data)
 {
 	t_philo	*philo;
-	bool	finished;
 
 	philo = (t_philo *)data;
 	if (dinner_setup(philo))
 		return (NULL);
-	while (!simulation_finished(philo->rules, &finished) && !finished)
-	{
-		if (philo->full)
-			break ;
-		if (eat(philo))
-			return (NULL);
-		if (simulation_finished(philo->rules, &finished))
-			return (NULL);
-		if (finished)
-			break ;
-		if (write_status(SLEEP, philo, DEBUG_MODE))
-			return (NULL);
-		if (smart_sleep(philo->rules->time_to_sleep * 1e3, philo->rules))
-			return (NULL);
-		if (think(philo, false))
-			return (NULL);
-	}
+	if (philo_routine_loop(philo))
+		return (NULL);
 	return (philo);
 }
 
@@ -68,13 +76,9 @@ void	*dinner_simulation(void *data)
 actural dinner
 ./philo 5 100 100 100 [4]
 0)if no meals, return (->[0]);
-1)Create all threads, all philosophers.
-2) If only one philo->ad hoc function
-3)Create a monitor thread for death of philos.
-4)Synchronize the beggining of the simulation
-	pthread_create->philo starts running.
-	every philo starts simultaneously.
-5) JOIN everyone.
+1)Create all threads, all philosophers & a monitor thread. Start simulation.
+2)Setting the start time.
+3)JOIN everyone.
 */
 int	start_dinner(t_rules *rule)
 {
@@ -85,8 +89,6 @@ int	start_dinner(t_rules *rule)
 	rule->start_time = gettime(MILLISECONDS);
 	if (set_bool(&rule->rule_mutex, &rule->all_threads_ready, true))
 		return (1);
-	if (DEBUG_MODE == 1)
-		print_assigned_forks(rule);
 	if (join_threads(rule))
 		return (1);
 	return (0);

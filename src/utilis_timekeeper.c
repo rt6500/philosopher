@@ -13,8 +13,6 @@
 #include "../philo.h"
 
 /*
-gettimeofday
-
 time_code is set as seconds, milliseconds, and microseconds.
 */
 long	gettime(t_time_code time_code)

@@ -7,7 +7,7 @@ src/main.c \
 src/create_and_join_threads.c \
 src/dinner.c \
 src/philo_actions.c \
-src/philo_actions_eat_utilis.c \
+src/philo_actions_eat.c \
 src/getters_setters.c \
 src/init.c \
 src/monitor.c \

@@ -43,7 +43,8 @@ int	philo_died(t_philo *philo, bool *died)
 /*
 1. Call philo_died function to check if the philo is dead newly.
 2. if it detects a death, check the end_simulation flag.
-3. if end_simulation flag is False, write "DIED", and set end_simulation as true.
+3. if end_simulation flag is False, write "DIED",
+	and set end_simulation as true.
 ***mutex***
 reading last_meal_time: per-philosopher mutex by philo_died
 printing "DIED": for wrinting only by write_status
@@ -83,8 +84,8 @@ static int	wait_for_threads(t_rules *rule)
 
 	while (1)
 	{
-		if (all_threads_running(&rule->rule_mutex, &rule->threads_running_nbr, \
-		rule->num_philos, &state))
+		if (all_threads_running(&rule->rule_mutex, &rule->threads_running_nbr,
+				rule->num_philos, &state))
 			return (1);
 		if (state)
 			break ;
@@ -94,7 +95,7 @@ static int	wait_for_threads(t_rules *rule)
 }
 
 /*
-1. check the variable: end_simulation
+1. check end_simulation
 2. if end_simulation is False, check each philo threads whether they are die.
 3. cheking the philos state as long as end_simulation is FALSE.
 */

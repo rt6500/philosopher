@@ -46,14 +46,13 @@ static void	assign_forks(t_philo *philo, t_fork *forks, int philo_position)
 	if (philo->id % 2 == 0)
 	{
 		philo->first_fork = &forks[philo_position];
-		philo->second_fork = &forks[(philo_position + 1) \
+		philo->second_fork = &forks[(philo_position + 1)
 			% philo->rules->num_philos];
 	}
 }
 
 /*
 philo->id: 1, 2, ...
-
 */
 static int	philo_init(t_rules *rule)
 {
@@ -112,5 +111,7 @@ int	init_data(char **argv, t_rules *rule)
 	}
 	if (philo_init(rule))
 		return (1);
+	if (DEBUG_MODE == 1)
+		print_assigned_forks(rule);
 	return (0);
 }
