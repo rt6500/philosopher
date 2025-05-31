@@ -6,7 +6,7 @@
 /*   By: rseki <rseki@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 09:02:56 by rseki             #+#    #+#             */
-/*   Updated: 2025/05/04 07:58:40 by rseki            ###   ########.fr       */
+/*   Updated: 2025/05/31 08:51:39 by rseki            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 #include <unistd.h>   //write, usleep
 
 /*write function macro*/
-#define DEBUG_MODE 1
+#define DEBUG_MODE 0 
 
 //*** structures ***/
 typedef struct s_rules	t_rules;

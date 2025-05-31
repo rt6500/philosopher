@@ -71,6 +71,11 @@ int	write_status(t_philo_status status, t_philo *philo, bool debug)
 		return (0);
 	if (handle_mutex(&philo->rules->write_lock, LOCK))
 		return (1);
+	if (get_bool(&philo->rules->rule_mutex, &philo->rules->end_simulation,
+			&finished))
+		return (handle_mutex(&philo->rules->write_lock, UNLOCK), 1);
+	if (finished && status != DIED)
+		return (handle_mutex(&philo->rules->write_lock, UNLOCK), 0);
 	elapsed = gettime(MILLISECONDS) - philo->rules->start_time;
 	if (debug)
 		write_status_debug(status, philo, elapsed);
