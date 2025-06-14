@@ -14,8 +14,6 @@
 
 /*
 check if a philo is dead, and updated the passed died pointer.
-***mutex***
-reading last_meal_time: per-philosopher mutex
 */
 int	philo_died(t_philo *philo, bool *died)
 {
@@ -45,10 +43,6 @@ int	philo_died(t_philo *philo, bool *died)
 2. if it detects a death, check the end_simulation flag.
 3. if end_simulation flag is False, write "DIED",
 	and set end_simulation as true.
-***mutex***
-reading last_meal_time: per-philosopher mutex by philo_died
-printing "DIED": for wrinting only by write_status
-updating end_simulation: inside rule by set_bool
 */
 static int	check_philos_state(t_rules *rule)
 {

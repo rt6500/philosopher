@@ -22,8 +22,6 @@ static int	dinner_setup(t_philo *philo)
 	if (set_long(&philo->philo_mutex, &philo->last_meal_time,
 			gettime(MILLISECONDS)))
 		return (1);
-	// if (de_synchronize_philo(philo))
-	// 	return (1);
 	return (0);
 }
 

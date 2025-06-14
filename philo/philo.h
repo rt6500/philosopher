@@ -10,10 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <limits.h>  //LLONG_MAX
-#include <pthread.h> // mutex: init destroy lock unlock,
-						// threads : create join detach
 #include <errno.h>
+#include <limits.h>  //LLONG_MAX
+#include <pthread.h> // mutex & threads
 #include <stdbool.h>
 #include <stdio.h>    //printf
 #include <stdlib.h>   //malloc free
@@ -21,7 +20,7 @@
 #include <unistd.h>   //write, usleep
 
 /*write function macro*/
-#define DEBUG_MODE 0 
+#define DEBUG_MODE 0
 
 //*** structures ***/
 typedef struct s_rules	t_rules;
@@ -136,7 +135,6 @@ int						join_threads(t_rules *rule);
 // philo_actions.c
 int						think(t_philo *philo, bool pre_simulation);
 void					*one_philo(void *arg);
-int						eat(t_philo *philo);
 
 // philo_actions_eat.c
 int						eat(t_philo *philo);
@@ -149,7 +147,6 @@ int						wait_for_start_signal(t_rules *rule);
 int						all_threads_running(pthread_mutex_t *mutex,
 							long *threads, long num_philos, bool *result);
 int						increase_long(pthread_mutex_t *mutex, long *value);
-int						de_synchronize_philo(t_philo *philo);
 
 // utilis_timekeeper.c
 long					gettime(t_time_code time_code);
